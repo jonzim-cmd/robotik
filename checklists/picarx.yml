@@ -6,9 +6,16 @@ levels:
     items:
       - key: setup
         label: Setup und Testfahrt
+        description: |
+          - Prüfe die Montage (Räder fest, Kabel stecken korrekt).
+          - Lade den Akku bzw. versorge den Pi.
+          - Starte das Beispielprogramm und mache eine kurze Testfahrt.
   - key: sensoren
     title: Sensoren
     items:
       - key: kamera
         label: Kamera testen (optional)
-
+        description: |
+          - Aktiviere die Kamera und prüfe das Bild.
+          - Erkenne eine einfache Farbe oder ein Objekt.
+          - Dokumentiere kurz das Ergebnis.

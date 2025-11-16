@@ -1,0 +1,238 @@
+robot: rvr_plus
+title: RVR+ – Blockprogrammierung
+levels:
+  - key: start_verbindung
+    num: 0
+    title: Start & Verbindung
+    intro: |
+      Ziel: RVR+ verbinden, ausrichten und ein erstes Programm starten.
+    items:
+      - key: verbunden
+        label: Ich habe den RVR+ mit Sphero Edu verbunden und kann ihn in der App sehen.
+      - key: ausrichten
+        label: Ich weiß, wie man den RVR+ ausrichtet/„aimt“, sodass 0° nach vorne zeigt.
+      - key: blocks_programm
+        label: Ich habe ein neues Programm im Modus „Blocks“ erstellt.
+      - key: erstes_programm
+        label: Ich habe ein erstes Programm geschrieben (z. B. LED-Farbe ändern oder kurze Bewegung).
+        noteLabel: Meine eigene erste Aktion
+
+  - key: bewegung
+    num: 1
+    title: Bewegung & Sequenzen
+    intro: |
+      Ziel: Den RVR+ gezielt fahren lassen (vorwärts, drehen, stoppen).
+      Du nutzt vor allem Bewegungs-Blöcke wie „Roll“ (Geschwindigkeit, Richtung, Dauer).
+    items:
+      - key: gerade_fahrt
+        label: Gerade Fahrt
+        description: |
+          RVR+ fährt bei Programmstart:
+          - geradeaus (Heading z. B. 0°)
+          - mit einer von dir gewählten Geschwindigkeit
+          - für eine bestimmte Zeit
+          - und bleibt dann stehen
+      - key: vor_und_zurueck
+        label: Vor & Zurück
+        description: |
+          RVR+ fährt:
+          - zuerst vorwärts
+          - dann rückwärts (Heading z. B. 180°)
+          - ohne manuelles Lenken (nur Programm)
+      - key: einfache_form
+        label: Einfache Form
+        description: |
+          RVR+ fährt eine einfache Figur, z. B. ein „L“ oder ein „S“, nur mit mehreren „Roll“-Blöcken.
+        noteLabel: Meine eigene Bewegungs-Idee (z. B. Slalom um Hindernisse)
+
+  - key: schleifen
+    num: 2
+    title: Schleifen (Wiederholen)
+    intro: |
+      Ziel: Wiederholungen nutzen, statt immer die gleichen Blöcke zu kopieren.
+      Du nutzt Blöcke wie „wiederhole X mal“ oder „wiederhole fortlaufend“.
+    items:
+      - key: quadrat_mit_schleife
+        label: Quadrat mit Schleife
+        description: |
+          RVR+ fährt ein Quadrat, indem du:
+          - eine Bewegung (vorwärts + drehen) programmierst
+          - und diese Abfolge mit „wiederhole 4‑mal“ wiederholst
+          - (nicht viermal copy‑paste)
+      - key: dauerpatrouille
+        label: Dauerpatrouille
+        description: |
+          RVR+ fährt im Kreis oder hin und her, solange das Programm läuft:
+          - Du nutzt eine Endlosschleife („wiederhole fortlaufend“)
+          - Er macht immer wieder dieselbe Bewegungsfolge
+      - key: eigene_figur
+        label: Eigene Figur mit Schleife
+        description: |
+          Ich habe eine eigene Figur (z. B. Dreieck, Acht, Zickzack) programmiert, die mit einer Schleife läuft.
+        noteLabel: Welche Figur ich gemacht habe
+
+  - key: leds
+    num: 3
+    title: LEDs & visuelles Feedback
+    intro: |
+      Ziel: LEDs nutzen, um zu sehen, was der Roboter „denkt“ oder in welchem Zustand er ist.
+      RVR+ hat mehrfarbige LEDs (z. B. vorne, hinten).
+    items:
+      - key: start_signal
+        label: Start‑Signal
+        description: |
+          Bei Programmstart:
+          - RVR+ zeigt eine Startfarbe (z. B. grün)
+          - dann beginnt er mit der Bewegung
+      - key: leds_abhaengig
+        label: LEDs abhängig von der Bewegung
+        description: |
+          Während das Programm läuft:
+          - Wenn RVR+ geradeaus fährt → LEDs haben eine bestimmte Farbe
+          - Wenn er dreht → LEDs haben eine andere Farbe
+      - key: status_farbsystem
+        label: Eigenes Status‑Farb‑System
+        description: |
+          Ich habe mir selbst überlegt, was meine LED‑Farben bedeuten (z. B. rot = Gefahr, blau = Fahrt, grün = fertig) und das im Programm umgesetzt.
+        noteLabel: Meine LED‑Regeln
+
+  - key: sensoren
+    num: 4
+    title: Sensoren lesen (Farbe, Licht, Bewegung)
+    intro: |
+      Ziel: Sensorwerte sichtbar machen und im Programm verwenden.
+      Wichtige Sensoren beim RVR+:
+      - Farbsensor (unten) – erkennt Farben/Untergrund
+      - Lichtsensor – misst Umgebungshelligkeit
+      - Bewegungssensor/IMU – erkennt Neigung/Beschleunigung
+    items:
+      - key: farbsensor_led
+        label: Farbsensor → LED‑Farbe
+        description: |
+          - RVR+ steht über verschieden farbigen Flächen (z. B. Papier)
+          - Dein Programm liest die erkannte Farbe aus
+          - Die LEDs leuchten in der erkannten Farbe
+      - key: lichtsensor_hell_dunkel
+        label: Lichtsensor → hell/dunkel
+        description: |
+          - Dein Programm liest den Lichtwert
+          - Bei hell zeigt RVR+ z. B. eine helle Farbe
+          - Bei dunkel eine dunkle Farbe oder er stoppt
+      - key: neigung_reaktion
+        label: Neigung/Bewegung → Reaktion
+        description: |
+          - Dein Programm nutzt z. B. Neigung oder Bewegung (Pitch/Roll/Beschleunigung)
+          - Wenn du den RVR+ anhebst oder die Fahrbahn kippst
+          - ändert sich das Verhalten (z. B. LEDs, Bewegung, Sound falls vorhanden)
+      - key: eigener_sensor_versuch
+        label: Eigener Sensor‑Versuch
+        description: |
+          Ich habe ein eigenes Experiment mit mindestens einem Sensor gebaut (z. B. „Lärm‑Alarm“ mit Lichtwechsel, „Neigungs‑Warnung“, etc.).
+        noteLabel: Welcher Sensor + Idee
+
+  - key: bedingungen
+    num: 5
+    title: Bedingungen (Wenn … dann …)
+    intro: |
+      Ziel: RVR+ reagiert selbstständig auf seine Umgebung.
+      Du nutzt If‑Blöcke wie „wenn … dann …“ und „sonst“.
+    items:
+      - key: farbe_stopp
+        label: Farbe als Stopp‑Signal
+        description: |
+          - RVR+ fährt los
+          - wenn der Farbsensor z. B. rot erkennt
+          - dann stoppt er und ändert die LED‑Farbe
+      - key: hell_dunkel_fahrverhalten
+        label: Hell/Dunkel beeinflusst das Fahrverhalten
+        description: |
+          - wenn es dunkel ist (Lichtsensor unter einem Wert)
+          - fährt RVR+ langsamer oder bleibt stehen
+          - sonst fährt er schneller
+      - key: neigungs_schutz
+        label: Neigungs‑Schutz
+        description: |
+          - wenn der RVR+ zu stark geneigt wird oder eine starke Beschleunigung spürt
+          - stoppt er oder wechselt in einen „Sicherheitsmodus“ (z. B. LEDs rot, langsame Fahrt)
+      - key: if_else_zwei_varianten
+        label: Wenn–Dann–Sonst mit zwei Varianten
+        description: |
+          Beispiel:
+          - wenn Bodenfarbe = blau → links drehen
+          - sonst → rechts drehen
+        noteLabel: Meine eigene Wenn‑Dann‑Idee
+
+  - key: variablen
+    num: 6
+    title: Eigene Variablen („Gedächtnis“)
+    intro: |
+      Ziel: RVR+ merkt sich etwas – Zähler, Runden, Modi.
+      Du nutzt Variablen (selbst erstellte Namen) und veränderst sie im Programm.
+    items:
+      - key: variable_anlegen
+        label: Variable anlegen
+        description: |
+          - Ich habe eine Variable erstellt, z. B. „runden“, „kollisionen“, „modus“ oder „speed“
+      - key: startwert_setzen
+        label: Startwert setzen
+        description: |
+          - Im Start‑Block setze ich die Variable auf einen Startwert
+          - z. B. „setze runden auf 0“
+      - key: variable_veraendern
+        label: Variable verändern
+        description: |
+          - Im Programm wird die Variable verändert
+          - z. B. „ändere runden um 1“ oder „setze modus auf 1“
+      - key: variable_nutzen
+        label: Variable sichtbar nutzen
+        description: |
+          - Ich nutze die Variable in einer If‑Bedingung
+          - oder zur Geschwindigkeitssteuerung (z. B. „speed“ für Roll‑Blöcke)
+          - oder ich zeige sie sichtbar an (LED‑Signale, Ausgabe in der App)
+      - key: mini_projekt_variable
+        label: Kleines Projekt mit Variable
+        description: |
+          Ich habe ein Mini‑Projekt gemacht, in dem eine Variable Sinn ergibt, z. B.:
+          - RVR+ zählt, wie oft er eine „Runde“ fährt
+          - oder wie oft er auf ein Signal reagiert
+          - oder er hat zwei Fahrmodi („modus“: 0 = vorsichtig, 1 = schnell)
+        noteLabel: Meine Variable + Projekt
+
+  - key: ir
+    num: 7
+    title: IR‑Kommunikation (Bonus)
+    intro: |
+      Ziel: RVR+ nutzt Infrarot, um mit einem anderen Roboter zu kommunizieren (z. B. Leader/Follower).
+      Hinweis: IR ist vor allem für Kommunikation zwischen Robotern geeignet.
+    items:
+      - key: ir_senden
+        label: Programm A – IR‑Signal senden
+      - key: ir_empfangen
+        label: Programm B – IR‑Signal empfangen
+      - key: ir_reaktion
+        label: Reaktion bei Signal
+        description: |
+          - Roboter B ändert sein Verhalten, wenn er das Signal empfängt
+          - z. B. folgt er, fährt los oder ändert LEDs
+        noteLabel: Meine IR‑Idee (z. B. „Follower“, „Stopp‑Signal“)
+
+  - key: projekt
+    num: 8
+    title: Eigenes Projekt
+    intro: |
+      Ziel: Du kombinierst mehrere Dinge, die du gelernt hast.
+    items:
+      - key: eigenes_projekt
+        label: Eigenes Projekt
+        description: |
+          Anforderungen an dein Projekt:
+          - Nutzt Bewegung und mindestens eine Schleife
+          - Nutzt mindestens einen Sensor (Farbe, Licht oder Bewegung)
+          - Enthält mindestens eine If‑Bedingung
+          - Nutzt optional eine eigene Variable (Bonus)
+          - Du kannst erklären:
+            - Was soll RVR+ tun?
+            - Welche Sensoren nutzt er?
+            - Welche Entscheidungen trifft er?
+        noteLabel: Titel meines Projekts / Kurzbeschreibung in 2–3 Sätzen
+

@@ -13,10 +13,10 @@ export const ProgressTable = pgTable(
     robotKey: text('robot_key').notNull(),
     itemKey: text('item_key').notNull(),
     status: text('status', { enum: ['done', 'todo', 'in_progress'] }).notNull(),
+    payload: text('payload'),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.studentId, t.robotKey, t.itemKey] }),
   })
 )
-

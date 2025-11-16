@@ -2,8 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Robotik Checklisten',
-  description: 'Checklisten für Robotikunterricht',
+  title: 'Robotik',
+  description: 'Robotik-Tool für Unterricht und mehr',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -13,4 +13,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-

@@ -19,7 +19,7 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center gap-3 p-3">
-        <div className="font-semibold text-brand-300">Robotik Checklisten</div>
+        <div className="font-semibold text-brand-300">Robotik</div>
         <div className="ml-auto flex items-center gap-2">
           <select className="select" value={selectedStudent} onChange={(e) => updateSelection('student', e.target.value)}>
             <option value="">Schüler wählen…</option>
@@ -39,4 +39,3 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
     </header>
   )
 }
-

@@ -6,13 +6,27 @@ levels:
     items:
       - key: verbinden
         label: Micro:Bit verbinden und Testfahrt
+        description: |
+          - Verbinde den Micro:Bit mit dem Computer.
+          - Übertrage das Testprogramm.
+          - Führe eine kurze Fahrt durch, um die Motoren zu testen.
       - key: leds
         label: LEDs steuern
+        description: |
+          - Lasse die Regenbogen-LEDs leuchten.
+          - Programmiere ein Lauflicht.
   - key: sensoren
     title: Sensoren
     items:
       - key: linie
         label: Liniensensor testen
+        description: |
+          - Lege eine schwarze Linie auf den Boden.
+          - Lasse den Roboter der Linie folgen (links/rechts Korrektur).
+          - Teste verschiedene Geschwindigkeiten.
       - key: abstand
         label: Abstandssensor reagieren lassen
-
+        description: |
+          - Stelle ein Hindernis vor den Roboter.
+          - Reagiere auf geringen Abstand (z. B. stoppen oder ausweichen).
+          - Zeige die Reaktion sichtbar (LED-Farbe oder Piepsen).

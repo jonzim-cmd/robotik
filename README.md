@@ -1,4 +1,4 @@
-# Robotik Checklisten (Vercel / Next.js)
+# Robotik (Vercel / Next.js)
 
 Ein modulares Tool für Schüler-Checklisten pro Roboter (RVR+ Sphero, Cutebot Pro, PiCar‑X). Dark-UI, Level‑Tabs, Fortschrittsbalken, Admin zum Anlegen von Schülern.
 
@@ -14,10 +14,27 @@ Ein modulares Tool für Schüler-Checklisten pro Roboter (RVR+ Sphero, Cutebot P
 
 Ohne DB werden Schüler leer angezeigt, Fortschritt wird nicht serverseitig gespeichert (nur Demo). Admin kann DB initialisieren und Schüler anlegen, wenn DB-Env gesetzt ist.
 
+### Datenbank verbinden (Neon/Vercel Postgres)
+
+1) `.env.local` anlegen (lokal) und Verbindungsdaten eintragen:
+
+```
+POSTGRES_URL=postgresql://<user>:<pass>@<host>/<db>?sslmode=require
+# optional
+POSTGRES_URL_NON_POOLING=...
+# optional – falls nur vorhanden, wird automatisch genutzt
+DATABASE_URL=...
+```
+
+2) App starten (`npm run dev`), zu `/admin` gehen und „Datenbank initialisieren“ klicken.
+
+3) Einen Schüler anlegen, im Header auswählen und in der Checkliste abhaken/Antworten eingeben – Speicherung erfolgt serverseitig.
+
 ## Deployment auf Vercel
 - Vercel Projekt anlegen und dieses Repo importieren
 - Env Vars setzen:
   - `POSTGRES_URL` (oder `POSTGRES_URL_NON_POOLING`) aus Vercel Postgres/Neon
+  - Alternativ `DATABASE_URL` – wird automatisch als Fallback verwendet
 - Deploy starten
 - Admin öffnen (`/admin`) und "Datenbank initialisieren" klicken
 

@@ -12,15 +12,20 @@ export default async function Page() {
 
   const robots = await getRobots()
   const students = await getStudents()
-  const checklist = await loadChecklist(selectedRobot)
+  const checklist = selectedStudent ? await loadChecklist(selectedRobot) : null
 
   return (
     <main className="min-h-screen">
       <Header robots={robots} students={students} selectedRobot={selectedRobot} selectedStudent={selectedStudent} />
       <div className="mx-auto max-w-5xl p-4">
-        <ChecklistView robotKey={selectedRobot} studentId={selectedStudent} checklist={checklist} />
+        {selectedStudent ? (
+          <ChecklistView robotKey={selectedRobot} studentId={selectedStudent} checklist={checklist!} />
+        ) : (
+          <div className="card p-5 text-sm text-neutral-300">
+            Bitte oben einen Schüler auswählen, um die Inhalte zu sehen.
+          </div>
+        )}
       </div>
     </main>
   )
 }
-
