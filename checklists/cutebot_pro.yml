@@ -1,0 +1,18 @@
+robot: cutebot_pro
+title: Cutebot Pro – Basis Checkliste
+levels:
+  - key: start
+    title: Start
+    items:
+      - key: verbinden
+        label: Micro:Bit verbinden und Testfahrt
+      - key: leds
+        label: LEDs steuern
+  - key: sensoren
+    title: Sensoren
+    items:
+      - key: linie
+        label: Liniensensor testen
+      - key: abstand
+        label: Abstandssensor reagieren lassen
+

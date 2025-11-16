@@ -1,0 +1,14 @@
+robot: picarx
+title: PiCar-X – Basis Checkliste
+levels:
+  - key: start
+    title: Start
+    items:
+      - key: setup
+        label: Setup und Testfahrt
+  - key: sensoren
+    title: Sensoren
+    items:
+      - key: kamera
+        label: Kamera testen (optional)
+
