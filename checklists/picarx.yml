@@ -2,20 +2,70 @@ robot: picarx
 title: PiCar-X – Basis Checkliste
 levels:
   - key: start
-    title: Start
+    title: Start & Grundlagen
+    intro: |
+      **Ziel:** PiCar-X aufbauen, in Betrieb nehmen und erste Testfahrt durchführen.
+      
+      Der PiCar-X ist ein **Raspberry Pi basierter Roboter** mit vielen Sensoren und Aktuatoren.
     items:
       - key: setup
-        label: Setup und Testfahrt
+        label: Setup und erste Testfahrt
         description: |
-          - Prüfe die Montage (Räder fest, Kabel stecken korrekt).
-          - Lade den Akku bzw. versorge den Pi.
-          - Starte das Beispielprogramm und mache eine kurze Testfahrt.
+          **Hardware-Check & Inbetriebnahme:**
+          
+          **1. Montage prüfen:**
+          - ✓ Alle **Räder fest** montiert?
+          - ✓ **Kabel** korrekt eingesteckt?
+          - ✓ **Servo-Motoren** beweglich?
+          - ✓ Nichts wackelt oder ist lose?
+          
+          **2. Stromversorgung:**
+          - Lade den **Akku vollständig** auf
+          - Oder verbinde den **Raspberry Pi** mit Strom
+          - Power-LED leuchtet? ✓
+          
+          **3. Erste Testfahrt:**
+          - Starte das **Beispielprogramm** (vorinstalliert)
+          - Lasse den PiCar-X **geradeaus** fahren (2-3 Meter)
+          - Teste **Lenkung** (links/rechts)
+          - Teste **Rückwärtsfahrt**
+          
+          ⚠️ **Wichtig:** Teste auf ebenem Boden mit genug Platz!
+          
+          ✅ **Erfolg:** PiCar-X fährt kontrolliert und reagiert auf Befehle.
+  
   - key: sensoren
-    title: Sensoren
+    title: Sensoren & Hardware
+    intro: |
+      **Ziel:** Die eingebauten Sensoren kennenlernen und testen.
+      
+      Der PiCar-X hat viele **Sensoren**: Kamera, Ultraschall, Liniensensor, etc.
     items:
       - key: kamera
-        label: Kamera testen (optional)
+        label: Kamera testen und Bild erfassen
         description: |
-          - Aktiviere die Kamera und prüfe das Bild.
-          - Erkenne eine einfache Farbe oder ein Objekt.
-          - Dokumentiere kurz das Ergebnis.
+          **Kamera-System aktivieren:**
+          
+          **Schritt-für-Schritt:**
+          
+          1. **Kamera aktivieren:**
+             - Prüfe ob Kamera-Modul korrekt verbunden ist
+             - Aktiviere die Kamera im Raspberry Pi (Config/Software)
+             - Starte das Kamera-Testprogramm
+          
+          2. **Bild erfassen:**
+             - Kamera zeigt **Live-Bild** an?
+             - Bewege ein **Objekt** vor die Kamera
+             - Mache ein **Foto** (Speichern testen)
+          
+          3. **Einfache Farb-/Objekt-Erkennung:**
+             - Nutze ein **farbiges Objekt** (z.B. roter Ball)
+             - Programm erkennt die **Farbe**?
+             - Oder: Nutze **Gesichtserkennung** (falls verfügbar)
+          
+          **Dokumentation:**
+          - Welche **Farbe/Objekt** hast du erkannt?
+          - Wie **genau** war die Erkennung?
+          - **Screenshot** oder Beschreibung des Ergebnisses
+          
+          💡 **Kamera = Augen des Roboters** – sehr wichtig für autonome Navigation!

@@ -2,31 +2,148 @@ robot: cutebot_pro
 title: Cutebot Pro – Basis Checkliste
 levels:
   - key: start
-    title: Start
+    title: Start & Grundlagen
+    intro: |
+      **Ziel:** Cutebot Pro mit Micro:Bit programmieren und grundlegende Funktionen testen.
+      
+      Der Cutebot Pro ist ein **Micro:Bit Roboter** mit LEDs, Motoren und Sensoren.
     items:
       - key: verbinden
-        label: Micro:Bit verbinden und Testfahrt
+        label: Micro:Bit verbinden und erste Testfahrt
         description: |
-          - Verbinde den Micro:Bit mit dem Computer.
-          - Übertrage das Testprogramm.
-          - Führe eine kurze Fahrt durch, um die Motoren zu testen.
+          **Inbetriebnahme & Erstes Programm:**
+          
+          **1. Hardware vorbereiten:**
+          - Setze den **Micro:Bit** auf den Cutebot Pro
+          - Stelle sicher, dass er **fest sitzt**
+          - Schalte den Cutebot **ein** (Power-Schalter)
+          
+          **2. Programmieren:**
+          - Öffne **MakeCode** (makecode.microbit.org)
+          - Lade die **Cutebot-Erweiterung** (falls nötig)
+          - Erstelle ein **Testprogramm:**
+            - Vorwärts fahren für 2 Sekunden
+            - Stoppen
+          
+          **3. Übertragen & Testen:**
+          - Verbinde Micro:Bit mit **USB-Kabel**
+          - **Übertrage** das Programm (HEX-Datei)
+          - Trenne USB-Kabel
+          - **Testfahrt** auf ebenem Boden
+          
+          ✅ **Erfolg:** Beide Motoren drehen, Roboter fährt geradeaus!
+      
       - key: leds
-        label: LEDs steuern
+        label: Regenbogen-LEDs steuern
         description: |
-          - Lasse die Regenbogen-LEDs leuchten.
-          - Programmiere ein Lauflicht.
+          **LEDs programmieren – visuelles Feedback:**
+          
+          **Aufgabe 1: LEDs zum Leuchten bringen**
+          
+          ```
+          Bei Start:
+            Setze alle LEDs auf ROT
+            Warte 1 Sekunde
+            Setze alle LEDs auf GRÜN
+          ```
+          
+          **Aufgabe 2: Lauflicht programmieren**
+          
+          ```
+          Wiederhole fortlaufend:
+            LED 1 → Rot
+            Warte 200ms
+            LED 2 → Orange
+            Warte 200ms
+            LED 3 → Gelb
+            ... (bis LED 8)
+          ```
+          
+          **Bonus-Ideen:**
+          - 🌈 **Regenbogen-Animation:** Alle Farben durchlaufen
+          - 🚨 **Polizei-Licht:** Abwechselnd Rot/Blau blinken
+          - 💫 **Zufallsfarben:** LEDs mit Random-Werten
+          
+          💡 **LEDs zeigen den Status des Roboters!**
+  
   - key: sensoren
-    title: Sensoren
+    title: Sensoren nutzen
+    intro: |
+      **Ziel:** Liniensensor und Ultraschall-Abstandssensor programmieren.
+      
+      Mit Sensoren wird der Cutebot Pro **autonom** und kann auf seine Umgebung reagieren.
     items:
       - key: linie
-        label: Liniensensor testen
+        label: Liniensensor – Linienfolger programmieren
         description: |
-          - Lege eine schwarze Linie auf den Boden.
-          - Lasse den Roboter der Linie folgen (links/rechts Korrektur).
-          - Teste verschiedene Geschwindigkeiten.
+          **Autonomes Linienfolgen:**
+          
+          **Setup:**
+          - Klebe eine **schwarze Linie** auf hellen Untergrund
+          - Oder nutze **schwarzes Klebeband** auf weißem Boden
+          - Linie sollte **2-3 cm breit** sein
+          
+          **Programm-Logik:**
+          
+          ```
+          Wiederhole fortlaufend:
+            
+            Wenn BEIDE Sensoren = SCHWARZ erkannt
+              → Fahre GERADEAUS
+              
+            Wenn NUR LINKER Sensor = SCHWARZ
+              → Drehe leicht LINKS (korrigiere)
+              
+            Wenn NUR RECHTER Sensor = SCHWARZ
+              → Drehe leicht RECHTS (korrigiere)
+              
+            Wenn BEIDE Sensoren = WEIß
+              → STOPP (Linie verloren!)
+          ```
+          
+          **Feintuning:**
+          - Teste verschiedene **Geschwindigkeiten** (30, 50, 70)
+          - Langsamer = genauer, aber langsam
+          - Schneller = cool, aber schwerer zu steuern
+          - Finde die **optimale Balance**!
+          
+          🏁 **Ziel:** Cutebot folgt der Linie automatisch, auch bei Kurven!
+      
       - key: abstand
-        label: Abstandssensor reagieren lassen
+        label: Ultraschall-Abstandssensor – Hindernisse erkennen
         description: |
-          - Stelle ein Hindernis vor den Roboter.
-          - Reagiere auf geringen Abstand (z. B. stoppen oder ausweichen).
-          - Zeige die Reaktion sichtbar (LED-Farbe oder Piepsen).
+          **Hinderniserkennung & Reaktion:**
+          
+          **Programm mit Abstandssensor:**
+          
+          ```
+          Wiederhole fortlaufend:
+            Messe Abstand (in cm)
+            
+            Wenn Abstand < 15 cm
+              → STOPP!
+              → LEDs: ROT
+              → (optional) Piepston
+              → Fahre RÜCKWÄRTS (1 Sekunde)
+              → Drehe (nach links oder rechts)
+              → Fahre weiter
+              
+            Sonst
+              → Fahre VORWÄRTS
+              → LEDs: GRÜN
+          ```
+          
+          **Test-Setup:**
+          - Baue einen **Parcours** mit Hindernissen
+          - Cutebot fährt und **weicht aus**
+          - Er sollte **nicht** gegen Wände fahren!
+          
+          **Erweiterte Ideen:**
+          - 📏 **Abstandswarnung:** LED-Farbe je nach Distanz
+            - Weit (>30cm) → Grün
+            - Mittel (15-30cm) → Gelb  
+            - Nah (<15cm) → Rot + Stopp
+          - 🎯 **Zielverfolgung:** Bewege Hand vor Sensor, Roboter folgt
+          - 🚧 **Intelligente Navigation:** Mehrfach ausweichen
+          
+          ⚠️ **Sicherheits-Feature:** Roboter schützt sich selbst!

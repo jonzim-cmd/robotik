@@ -8,31 +8,116 @@
 
 html {
   -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
 
 body {
   @apply bg-neutral-950 text-neutral-100;
+  font-feature-settings: "kern" 1, "liga" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .card {
-  @apply rounded-xl border border-neutral-800 bg-neutral-900/70 shadow-sm;
+  @apply rounded-xl border border-neutral-800 bg-neutral-900/70 shadow-lg shadow-black/20;
 }
 
 .btn {
-  @apply inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 px-3.5 py-2.5 text-sm font-medium text-neutral-100 hover:bg-neutral-700 disabled:opacity-50;
+  @apply inline-flex items-center gap-2 rounded-md border border-neutral-700 bg-neutral-800 px-3.5 py-2.5 text-sm font-medium text-neutral-100 hover:bg-neutral-700 disabled:opacity-50 transition-colors;
 }
 
-.input, .select, .textarea {
-  @apply rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-sm text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-500/40;
+.input, .select {
+  @apply rounded-md border border-neutral-700 bg-neutral-900 px-3 py-2 text-[15px] text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-shadow;
+}
+
+.textarea {
+  @apply rounded-md border border-neutral-700 bg-neutral-900 px-3.5 py-3 text-[15px] leading-relaxed text-neutral-100 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500/50 transition-shadow resize-y;
 }
 
 .progress {
-  @apply h-2 w-full overflow-hidden rounded-full bg-neutral-800;
+  @apply h-2 w-full overflow-hidden rounded-full bg-neutral-800/80 shadow-inner;
 }
 
 .progress > span {
-  @apply block h-full bg-brand-500 transition-all;
+  @apply block h-full bg-gradient-to-r from-brand-500 to-brand-400 transition-all shadow-sm;
 }
 
 /* Better focus styles */
-*:focus-visible { outline: none; box-shadow: 0 0 0 2px theme('colors.brand.500'); }
+*:focus-visible { 
+  outline: none; 
+  box-shadow: 0 0 0 3px theme('colors.brand.500 / 0.4'); 
+  transition: box-shadow 0.2s;
+}
+
+/* Custom scrollbar for checklist tabs */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  @apply bg-neutral-900/50 rounded-full;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-neutral-700 rounded-full hover:bg-neutral-600;
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Typography improvements for better readability */
+p, li {
+  text-rendering: optimizeLegibility;
+}
+
+/* Fix Tailwind Preflight removing list styles */
+ul[class*="list-disc"] {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  padding-left: 0 !important;
+  margin-left: 1.5rem !important;
+}
+
+ol[class*="list-decimal"] {
+  list-style-type: decimal !important;
+  list-style-position: outside !important;
+  padding-left: 0 !important;
+  margin-left: 1.5rem !important;
+}
+
+/* Ensure list items display correctly */
+ul li, ol li {
+  display: list-item !important;
+  padding-left: 0.125rem !important;
+}
+
+/* Fix paragraph spacing in list items */
+li > p {
+  display: inline !important;
+  margin: 0 !important;
+}
+
+li > p:first-child {
+  display: inline !important;
+}
+
+/* Ensure consistent line heights */
+input[type="checkbox"] {
+  @apply flex-shrink-0;
+}
+
+/* Improve hover states */
+button:not(:disabled) {
+  @apply cursor-pointer;
+}
+
+button:disabled {
+  @apply cursor-not-allowed opacity-50;
+}
