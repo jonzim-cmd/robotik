@@ -23,21 +23,21 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
       const res = await fetch(`/api/progress?robot=${robotKey}&student=${studentId}`)
       const data = await res.json()
       if (!active) return
-      setProgress(data.progress || {})
+      setProgress((data.progress || {}) as ProgressMap)
     }
     if (studentId) load()
     else {
       const k = `local:${robotKey}:${'anon'}`
       const raw = typeof window !== 'undefined' ? localStorage.getItem(k) : null
-      setProgress(raw ? JSON.parse(raw) : {})
+      setProgress((raw ? JSON.parse(raw) : {}) as ProgressMap)
     }
     return () => { active = false }
   }, [robotKey, studentId])
 
   function toggleItem(itemKey: string) {
-    const current = progress[itemKey] === 'done' ? 'todo' : 'done'
-    const next = { ...progress, [itemKey]: current }
-    setProgress(next)
+    const current: 'done' | 'todo' | 'in_progress' = progress[itemKey] === 'done' ? 'todo' : 'done'
+    const next: ProgressMap = { ...(progress as ProgressMap), [itemKey]: current }
+    setProgress(next as ProgressMap)
     if (!studentId) {
       // local fallback
       const k = `local:${robotKey}:${'anon'}`
