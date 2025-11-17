@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server'
 import { randomId } from '@/lib/id'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function GET() {
   try {
@@ -27,4 +28,3 @@ export async function POST(req: NextRequest) {
     return Response.json({ ok: false, error: e?.message || 'Fehler' }, { status: 500 })
   }
 }
-

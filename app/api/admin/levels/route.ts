@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm'
 import { runMigrations } from '@/lib/migrate'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 // GET: Abrufen aller Level-Status für einen Roboter
 export async function GET(req: NextRequest) {

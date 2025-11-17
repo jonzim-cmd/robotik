@@ -4,6 +4,7 @@ import { ProgressTable } from '@/lib/schema'
 import { and, eq } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function GET(req: NextRequest) {
   const robot = req.nextUrl.searchParams.get('robot') || ''

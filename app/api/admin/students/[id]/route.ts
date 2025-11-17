@@ -5,6 +5,7 @@ import { eq } from 'drizzle-orm'
 import { runMigrations } from '@/lib/migrate'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
   try {
@@ -46,4 +47,3 @@ export async function DELETE(_req: NextRequest, context: { params: { id: string 
     return NextResponse.json({ ok: false, error: msg }, { status: /Database not configured/.test(msg) ? 400 : 500 })
   }
 }
-

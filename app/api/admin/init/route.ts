@@ -1,6 +1,7 @@
 import { runMigrations } from '@/lib/migrate'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function POST() {
   try {
@@ -10,4 +11,3 @@ export async function POST() {
     return Response.json({ ok: false, error: e?.message || 'Fehler' }, { status: 500 })
   }
 }
-
