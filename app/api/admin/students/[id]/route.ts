@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { StudentsTable, ProgressTable } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
-import { runMigrations } from '@/lib/migrate'
+import { ensureMigrations } from '@/lib/migrate'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export async function PATCH(req: NextRequest, context: { params: { id: string } }) {
   try {
-    await runMigrations()
+    await ensureMigrations()
     const id = context.params.id
     const body = await req.json()
     const rawName = (body.displayName || '').toString()
@@ -47,7 +47,7 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
 
 export async function DELETE(_req: NextRequest, context: { params: { id: string } }) {
   try {
-    await runMigrations()
+    await ensureMigrations()
     const id = context.params.id
     const db = await getDb()
     // Remove dependent progress rows first to keep data consistent

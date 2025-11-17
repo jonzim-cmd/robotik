@@ -1,11 +1,12 @@
 "use client"
+import Link from 'next/link'
 export function AdminHeader({ activeTab, onLevels, onStudents, onSetup }: { activeTab: 'levels'|'students'|'setup'; onLevels: () => void; onStudents: () => void; onSetup: () => void }) {
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center gap-3 p-3">
         <div className="font-semibold text-brand-300">Admin</div>
         <div className="ml-auto">
-          <a className="btn" href="/">Zurück zum Hauptmenü</a>
+          <Link className="btn" href="/" prefetch>Zurück zum Hauptmenü</Link>
         </div>
       </div>
       <div className="border-t border-neutral-800/80">
@@ -29,4 +30,3 @@ export function AdminHeader({ activeTab, onLevels, onStudents, onSetup }: { acti
     </header>
   )
 }
-

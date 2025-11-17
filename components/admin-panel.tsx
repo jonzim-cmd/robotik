@@ -74,6 +74,7 @@ export function AdminPanel() {
   const [levels, setLevels] = useState<Level[]>([])
   const [levelsByRobot, setLevelsByRobot] = useState<Record<string, Level[]>>({})
   const [levelLocks, setLevelLocks] = useState<Record<string, boolean>>({})
+  const [locksCache, setLocksCache] = useState<Record<string, Record<string, boolean>>>({})
   const [isSaving, setIsSaving] = useState(false)
 
   async function refreshStudents() {
@@ -92,11 +93,18 @@ export function AdminPanel() {
         setLevelsByRobot(prev => ({ ...prev, [robotKey]: checklistData.checklist.levels }))
       }
       
-      // Load current locks
-      const q = new URLSearchParams({ robot: robotKey, course: course || '' }).toString()
-      const locksRes = await fetch(`/api/admin/levels?${q}`)
-      const locksData = await locksRes.json()
-      setLevelLocks(locksData.locks || {})
+      // Load current locks with simple in-memory cache for this session
+      const cacheKey = `${robotKey}::${course || ''}`
+      if (locksCache[cacheKey]) {
+        setLevelLocks(locksCache[cacheKey])
+      } else {
+        const q = new URLSearchParams({ robot: robotKey, course: course || '' }).toString()
+        const locksRes = await fetch(`/api/admin/levels?${q}`)
+        const locksData = await locksRes.json()
+        const locks = locksData.locks || {}
+        setLevelLocks(locks)
+        setLocksCache(prev => ({ ...prev, [cacheKey]: locks }))
+      }
     } catch (error) {
       console.error('Error loading levels:', error)
     }
@@ -115,10 +123,13 @@ export function AdminPanel() {
   }
 
   useEffect(() => {
-    if (isAuthenticated) {
-      refreshStudents()
-      loadLevels(selectedRobot, selectedCourse)
-    }
+    if (!isAuthenticated) return
+    ;(async () => {
+      await Promise.all([
+        refreshStudents(),
+        loadLevels(selectedRobot, selectedCourse),
+      ])
+    })()
   }, [isAuthenticated, selectedRobot, selectedCourse])
 
   // Keep selectedCourse valid when course list changes
@@ -325,7 +336,10 @@ export function AdminPanel() {
         throw new Error(j?.error || 'API-Fehler')
       }
       
-      setLevelLocks({ ...levelLocks, [levelKey]: newState })
+      const cacheKey = `${selectedRobot}::${selectedCourse || ''}`
+      const next = { ...levelLocks, [levelKey]: newState }
+      setLevelLocks(next)
+      setLocksCache(prev => ({ ...prev, [cacheKey]: next }))
       pushToast(`✓ Level "${levelKey}" erfolgreich ${newState ? 'freigeschaltet' : 'gesperrt'} und gespeichert`, 'success')
     } catch (error: any) {
       console.error('Error toggling level:', error)
@@ -352,10 +366,12 @@ export function AdminPanel() {
         const j = await res.json().catch(() => ({} as any))
         throw new Error(j?.error || 'API-Fehler')
       }
-      // Optimistisch UI aktualisieren
-      const next: Record<string, boolean> = { ...levelLocks }
+      // Optimistisch UI + cache
+      const cacheKey = `${selectedRobot}::${selectedCourse || ''}`
+      const next: Record<string, boolean> = {}
       for (const l of levels) next[l.key] = true
       setLevelLocks(next)
+      setLocksCache(prev => ({ ...prev, [cacheKey]: next }))
       pushToast('✓ Alle Levels erfolgreich freigeschaltet und gespeichert','success')
     } catch (error: any) {
       console.error('Error unlocking all levels:', error)
@@ -382,9 +398,11 @@ export function AdminPanel() {
         const j = await res.json().catch(() => ({} as any))
         throw new Error(j?.error || 'API-Fehler')
       }
-      const next: Record<string, boolean> = { ...levelLocks }
+      const cacheKey = `${selectedRobot}::${selectedCourse || ''}`
+      const next: Record<string, boolean> = {}
       for (const l of levels) next[l.key] = false
       setLevelLocks(next)
+      setLocksCache(prev => ({ ...prev, [cacheKey]: next }))
       pushToast('✓ Alle Levels erfolgreich gesperrt und gespeichert','success')
     } catch (error: any) {
       console.error('Error locking all levels:', error)

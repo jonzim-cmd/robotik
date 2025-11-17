@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { ProgressTable, StudentsTable } from '@/lib/schema'
 import { inArray } from 'drizzle-orm'
-import { runMigrations } from '@/lib/migrate'
+import { ensureMigrations } from '@/lib/migrate'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export async function DELETE(req: NextRequest) {
   try {
-    await runMigrations()
+    await ensureMigrations()
     const body = await req.json().catch(() => ({} as any))
     const ids = Array.isArray(body?.ids) ? (body.ids as string[]).filter((x) => typeof x === 'string' && x.trim().length > 0) : []
     if (!ids || ids.length === 0) {
@@ -29,4 +29,3 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ ok: false, error: msg }, { status: /Database not configured/.test(msg) ? 400 : 500 })
   }
 }
-

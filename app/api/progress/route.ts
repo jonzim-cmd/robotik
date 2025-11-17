@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server'
 import { getDb } from '@/lib/db'
 import { ProgressTable } from '@/lib/schema'
 import { and, eq } from 'drizzle-orm'
-import { runMigrations } from '@/lib/migrate'
+import { ensureMigrations } from '@/lib/migrate'
 import { onProgressDelta } from '@/lib/xp/services/xp'
 
 export const dynamic = 'force-dynamic'
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   const { robot, student, delta } = await req.json()
-  await runMigrations()
+  await ensureMigrations()
   const db = await getDb().catch(() => null)
   if (!db) return Response.json({ ok: false, error: 'Database not configured' }, { status: 500 })
 

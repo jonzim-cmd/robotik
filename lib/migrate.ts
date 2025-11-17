@@ -115,3 +115,17 @@ export async function runMigrations() {
     ON students (lower(display_name), coalesce(course, ''));
   `
 }
+
+// Ensure migrations run only once per server process to avoid repeated overhead
+let _migrationsOnce: Promise<void> | null = null
+export async function ensureMigrations() {
+  if (_migrationsOnce) return _migrationsOnce
+  _migrationsOnce = (async () => {
+    await runMigrations()
+  })().catch((e) => {
+    // Reset on failure so subsequent calls can retry
+    _migrationsOnce = null
+    throw e
+  })
+  return _migrationsOnce
+}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { runMigrations } from '@/lib/migrate'
+import { ensureMigrations } from '@/lib/migrate'
 import { getDb } from '@/lib/db'
 import { ProgressTable } from '@/lib/schema'
 import { and, eq, inArray, sql as dsql } from 'drizzle-orm'
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 export async function POST(req: NextRequest, context: { params: { id: string } }) {
-  await runMigrations()
+  await ensureMigrations()
   const db = await getDb()
   const studentId = context.params.id
   const body = await req.json().catch(() => ({} as any))
@@ -103,4 +103,3 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
 
   return NextResponse.json({ ok: false, error: 'invalid action' }, { status: 400 })
 }
-

@@ -1,5 +1,6 @@
 "use client"
 import { useMemo, useTransition } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { SearchableSelect } from './searchable-select'
 import { LevelPill } from './xp/level-pill'
@@ -44,7 +45,7 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
               <option key={r.key} value={r.key}>{r.name}</option>
             ))}
           </select>
-          <a className="btn" href="/admin">Admin</a>
+          <Link className="btn" href="/admin" prefetch>Admin</Link>
         </div>
       </div>
       {isPending ? <div className="h-1 bg-brand-500 animate-pulse" /> : null}

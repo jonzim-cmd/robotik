@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { LevelLocksTable } from '@/lib/schema'
 import { and, eq } from 'drizzle-orm'
-import { runMigrations } from '@/lib/migrate'
+import { ensureMigrations } from '@/lib/migrate'
 import { resolveDbUrl } from '@/lib/db-url'
 import { sql as dsql } from 'drizzle-orm'
 
@@ -13,7 +13,7 @@ export const runtime = 'nodejs'
 export async function GET(req: NextRequest) {
   try {
     // Ensure tables exist so first-time clicks don't fail
-    await runMigrations()
+    await ensureMigrations()
     if (process.env.NODE_ENV !== 'production') {
       // minimal noise in dev
     } else {
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     // Ensure tables exist so writes never fail on fresh DBs
-    await runMigrations()
+    await ensureMigrations()
     if (process.env.NODE_ENV === 'production') {
       const url = resolveDbUrl()
       const visible = {
