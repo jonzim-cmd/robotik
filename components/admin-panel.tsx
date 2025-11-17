@@ -26,7 +26,7 @@ export function AdminPanel() {
   const [studentQuery, setStudentQuery] = useState('')
   const [showAllStudents, setShowAllStudents] = useState(false)
   const filteredStudents = students.filter(s => s.displayName.toLowerCase().includes(studentQuery.toLowerCase()))
-  const visibleStudents = (studentQuery ? filteredStudents : (showAllStudents ? filteredStudents : filteredStudents.slice(0, 5)))
+  const visibleStudents = (studentQuery ? filteredStudents : (showAllStudents ? filteredStudents : filteredStudents.slice(0, 3)))
   
   const [selectedRobot, setSelectedRobot] = useState('rvr_plus')
   const [robots] = useState<Robot[]>([
@@ -529,10 +529,10 @@ export function AdminPanel() {
           ))}
         </ul>
         {/* Show more/less control */}
-        {!studentQuery && filteredStudents.length > 5 && (
+        {!studentQuery && filteredStudents.length > 3 && (
           <div className="mt-3 flex items-center justify-between text-xs text-neutral-500">
             <span>
-              {showAllStudents ? `${filteredStudents.length} von ${filteredStudents.length}` : `5 von ${filteredStudents.length}`} angezeigt
+              {showAllStudents ? `${filteredStudents.length} von ${filteredStudents.length}` : `3 von ${filteredStudents.length}`} angezeigt
             </span>
             <button
               className="text-neutral-400 hover:text-neutral-200"
