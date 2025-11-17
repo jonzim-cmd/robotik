@@ -1,14 +1,15 @@
 import { sql } from '@vercel/postgres'
+import { resolveDbUrl } from './db-url'
 
 // Ensure @vercel/postgres sees a connection string even if only DATABASE_URL is set
-const _url = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL_NON_POOLING
+const _url = resolveDbUrl() || undefined
 if (!process.env.POSTGRES_URL && _url) {
   process.env.POSTGRES_URL = _url
 }
 
 export async function runMigrations() {
   // Give a clear, consistent error if no DB is configured so API routes can surface it
-  const url = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL_NON_POOLING
+  const url = resolveDbUrl()
   if (!url) {
     throw new Error('No database configured')
   }
