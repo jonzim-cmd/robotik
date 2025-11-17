@@ -26,7 +26,12 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
       <div className="mx-auto flex max-w-5xl items-center gap-3 p-3">
-        <div className="font-semibold text-brand-300">Robotik</div>
+        <div className="font-semibold text-brand-300 flex items-center gap-3">
+          <span>Robotik</span>
+          {selectedStudent ? (
+            <LevelPill studentId={selectedStudent} robotKey={selectedRobot} />
+          ) : null}
+        </div>
         <div className="ml-auto flex items-center gap-2">
           <SearchableSelect
             options={studentOptions}
@@ -34,9 +39,6 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
             placeholder="Schüler wählen…"
             onChange={(v) => updateSelection('student', v)}
           />
-          {selectedStudent ? (
-            <LevelPill studentId={selectedStudent} robotKey={selectedRobot} />
-          ) : null}
           <select className="select" value={selectedRobot} onChange={(e) => updateSelection('robot', e.target.value)}>
             {robots.map((r) => (
               <option key={r.key} value={r.key}>{r.name}</option>

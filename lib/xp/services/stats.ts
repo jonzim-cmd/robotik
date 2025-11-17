@@ -18,7 +18,7 @@ export async function getStats(studentId: string): Promise<XPStatsResponse> {
     levelsComplete: r.levelsCompleteCount || 0,
     masteryTier: r.masteryTier || 0,
   }]))
-  return { student: { totalXP: total, level, xpInLevel: Math.max(0, xpInLevel) }, robots }
+  return { student: { totalXP: total, level, xpInLevel: Math.max(0, xpInLevel), nextLevelXP }, robots } as any
 }
 
 export async function getRobotStats(studentId: string, robotKey: string) {
@@ -26,4 +26,3 @@ export async function getRobotStats(studentId: string, robotKey: string) {
   const [r] = await db.select().from(StudentRobotStatsTable).where(and(eq(StudentRobotStatsTable.studentId, studentId), eq(StudentRobotStatsTable.robotKey, robotKey)))
   return r || null
 }
-

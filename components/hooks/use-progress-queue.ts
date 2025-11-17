@@ -23,6 +23,8 @@ export function useProgressQueue(robotKey: string, studentId: string) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ robot: robotKey, student: studentId, delta })
       })
+      // Inform listeners (e.g., XP header pill) to refresh stats
+      try { window.dispatchEvent(new Event('xp:updated')) } catch {}
     } finally {
       inflightRef.current = false
       // If more came in during flight, schedule another flush
@@ -57,4 +59,3 @@ export function useProgressQueue(robotKey: string, studentId: string) {
 
   return { isSaving, queue }
 }
-
