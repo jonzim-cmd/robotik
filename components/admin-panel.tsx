@@ -34,13 +34,29 @@ export function AdminPanel() {
   const [editCourse, setEditCourse] = useState('')
   const [studentBusyId, setStudentBusyId] = useState<string | null>(null)
   const [studentQuery, setStudentQuery] = useState('')
+  const [bulkBusy, setBulkBusy] = useState(false)
+  const [activeCourses, setActiveCourses] = useState<string[]>([])
+  const courses = Array.from(new Set(students.map(s => s.course).filter(Boolean) as string[])).sort()
+  // keep activeCourses in sync with available courses; default to all
+  useEffect(() => {
+    setActiveCourses(prev => {
+      if (prev.length === 0) return courses
+      const next = prev.filter(c => courses.includes(c))
+      return next.length === 0 ? courses : next
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courses.join('\u0001')])
   const [showAllStudents, setShowAllStudents] = useState(false)
   const filteredStudents = students.filter(s => {
     const q = studentQuery.toLowerCase()
-    return (
+    const matchesQuery = (
       s.displayName.toLowerCase().includes(q) ||
       (s.course || '').toLowerCase().includes(q)
     )
+    if (!matchesQuery) return false
+    if (courses.length === 0) return true
+    if (!s.course) return true // Schüler ohne Kurs bleiben sichtbar
+    return activeCourses.includes(s.course)
   })
   const visibleStudents = (studentQuery ? filteredStudents : (showAllStudents ? filteredStudents : filteredStudents.slice(0, 3)))
   
@@ -197,6 +213,35 @@ export function AdminPanel() {
       pushToast(`❌ ${e?.message || 'Fehler beim Löschen'}`, 'error')
     } finally {
       setStudentBusyId(null)
+    }
+  }
+
+  async function bulkDelete(ids: string[], scopeLabel: string) {
+    const count = ids.length
+    if (count === 0) {
+      pushToast('Keine Schüler zum Löschen gefunden', 'error')
+      return
+    }
+    const really = confirm(`Wirklich ${scopeLabel} löschen?\nDies löscht ${count} Schüler und deren Fortschritt unumkehrbar.`)
+    if (!really) return
+    setBulkBusy(true)
+    try {
+      const res = await fetch('/api/admin/students/bulk', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids })
+      })
+      const r = await res.json().catch(() => ({} as any))
+      if (!res.ok || !r.ok) {
+        throw new Error(r?.error || 'Fehler beim Löschen')
+      }
+      pushToast(`✓ ${count} Schüler gelöscht`, 'success')
+      if (editId && ids.includes(editId)) cancelEdit()
+      refreshStudents()
+    } catch (e: any) {
+      pushToast(`❌ ${e?.message || 'Fehler beim Löschen'}`, 'error')
+    } finally {
+      setBulkBusy(false)
     }
   }
 
@@ -489,6 +534,47 @@ export function AdminPanel() {
             onChange={(e) => setStudentQuery(e.target.value)}
           />
         </div>
+        {/* Bulk actions */}
+        <div className="mb-3 flex flex-wrap gap-2">
+          <button
+            className="btn text-sm"
+            onClick={() => bulkDelete(visibleStudents.map(s => s.id), 'alle angezeigten Schüler')}
+            disabled={bulkBusy || visibleStudents.length === 0}
+            title={visibleStudents.length === 0 ? 'Keine angezeigten Schüler' : ''}
+          >
+            Alle angezeigten löschen
+          </button>
+          <button
+            className="btn text-sm"
+            onClick={() => bulkDelete(students.map(s => s.id), 'ALLE Schüler')}
+            disabled={bulkBusy || students.length === 0}
+            title={students.length === 0 ? 'Keine Schüler vorhanden' : ''}
+          >
+            Alle Schüler löschen
+          </button>
+        </div>
+        {courses.length > 0 && (
+          <div className="mb-3">
+            <div className="mb-1 text-xs text-neutral-400">Kurse</div>
+            <div className="flex flex-wrap gap-2">
+              {courses.map((c) => (
+                <label key={c} className="inline-flex items-center gap-1 text-xs text-neutral-200">
+                  <input
+                    type="checkbox"
+                    className="accent-brand-500"
+                    checked={activeCourses.includes(c)}
+                    onChange={() => setActiveCourses(prev => prev.includes(c) ? prev.filter(x => x !== c) : [...prev, c])}
+                  />
+                  <span>{c}</span>
+                </label>
+              ))}
+            </div>
+            <div className="mt-1 flex gap-3 text-[11px] text-neutral-400">
+              <button type="button" className="underline hover:text-neutral-200" onClick={() => setActiveCourses(courses)}>Alle</button>
+              <button type="button" className="underline hover:text-neutral-200" onClick={() => setActiveCourses([])}>Keine</button>
+            </div>
+          </div>
+        )}
         <ul className="space-y-1">
           {visibleStudents.map(s => (
             <li key={s.id} className="flex items-center justify-between rounded-md border border-neutral-800 bg-neutral-900/60 p-2 gap-2">
