@@ -24,7 +24,9 @@ export function AdminPanel() {
   const [editName, setEditName] = useState('')
   const [studentBusyId, setStudentBusyId] = useState<string | null>(null)
   const [studentQuery, setStudentQuery] = useState('')
+  const [showAllStudents, setShowAllStudents] = useState(false)
   const filteredStudents = students.filter(s => s.displayName.toLowerCase().includes(studentQuery.toLowerCase()))
+  const visibleStudents = (studentQuery ? filteredStudents : (showAllStudents ? filteredStudents : filteredStudents.slice(0, 5)))
   
   const [selectedRobot, setSelectedRobot] = useState('rvr_plus')
   const [robots] = useState<Robot[]>([
@@ -491,7 +493,7 @@ export function AdminPanel() {
           />
         </div>
         <ul className="space-y-1">
-          {filteredStudents.map(s => (
+          {visibleStudents.map(s => (
             <li key={s.id} className="flex items-center justify-between rounded-md border border-neutral-800 bg-neutral-900/60 p-2 gap-2">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 {editId === s.id ? (
@@ -526,6 +528,20 @@ export function AdminPanel() {
             </li>
           ))}
         </ul>
+        {/* Show more/less control */}
+        {!studentQuery && filteredStudents.length > 5 && (
+          <div className="mt-3 flex items-center justify-between text-xs text-neutral-500">
+            <span>
+              {showAllStudents ? `${filteredStudents.length} von ${filteredStudents.length}` : `5 von ${filteredStudents.length}`} angezeigt
+            </span>
+            <button
+              className="text-neutral-400 hover:text-neutral-200"
+              onClick={() => setShowAllStudents(v => !v)}
+            >
+              {showAllStudents ? 'Weniger anzeigen' : 'Alle anzeigen'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Setup (ans Ende verschoben) */}
