@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from 'react'
+import { Toast, ToastStack } from './toast'
 import { useRouter } from 'next/navigation'
 
 type Student = { id: string; displayName: string; course?: string }
@@ -21,6 +22,13 @@ export function AdminPanel() {
   const [info, setInfo] = useState('')
   const [studentInfo, setStudentInfo] = useState('')
   const [setupInfo, setSetupInfo] = useState('')
+  const [toasts, setToasts] = useState<Toast[]>([])
+  function pushToast(text: string, variant: Toast['variant'] = 'info', ttl = 3000) {
+    const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    setToasts((t) => [...t, { id, text, variant }])
+    if (ttl > 0) setTimeout(() => setToasts((t) => t.filter(x => x.id !== id)), ttl)
+  }
+  function dismissToast(id: string) { setToasts((t) => t.filter(x => x.id !== id)) }
   const [editId, setEditId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editCourse, setEditCourse] = useState('')
@@ -121,14 +129,13 @@ export function AdminPanel() {
       })
       const r = await res.json()
       if (!res.ok || !r.ok) throw new Error(r?.error || 'Fehler')
-      setStudentInfo('✓ Schüler erfolgreich angelegt')
+      pushToast('✓ Schüler erfolgreich angelegt', 'success')
       setStudents(prev => [r.student, ...prev])
       setName('')
       setCourse('')
     } catch (e: any) {
-      setStudentInfo(`❌ ${e?.message || 'Fehler'}`)
+      pushToast(`❌ ${e?.message || 'Fehler'}`, 'error')
     } finally {
-      setTimeout(() => setStudentInfo(''), 3000)
       setStudentBusyId(null)
     }
   }
@@ -164,13 +171,11 @@ export function AdminPanel() {
       if (!res.ok || !r.ok) {
         throw new Error(r?.error || 'Fehler beim Aktualisieren')
       }
-      setStudentInfo('✓ Schüler erfolgreich aktualisiert')
-      setTimeout(() => setStudentInfo(''), 3000)
+      pushToast('✓ Schüler erfolgreich aktualisiert', 'success')
       cancelEdit()
       refreshStudents()
     } catch (e: any) {
-      setStudentInfo(`❌ ${e?.message || 'Fehler beim Aktualisieren'}`)
-      setTimeout(() => setStudentInfo(''), 3000)
+      pushToast(`❌ ${e?.message || 'Fehler beim Aktualisieren'}`, 'error')
     } finally {
       setStudentBusyId(null)
     }
@@ -185,13 +190,11 @@ export function AdminPanel() {
       if (!res.ok || !r.ok) {
         throw new Error(r?.error || 'Fehler beim Löschen')
       }
-      setStudentInfo('✓ Schüler erfolgreich gelöscht')
-      setTimeout(() => setStudentInfo(''), 3000)
+      pushToast('✓ Schüler erfolgreich gelöscht', 'success')
       if (editId === id) cancelEdit()
       refreshStudents()
     } catch (e: any) {
-      setStudentInfo(`❌ ${e?.message || 'Fehler beim Löschen'}`)
-      setTimeout(() => setStudentInfo(''), 3000)
+      pushToast(`❌ ${e?.message || 'Fehler beim Löschen'}`, 'error')
     } finally {
       setStudentBusyId(null)
     }
@@ -226,14 +229,11 @@ export function AdminPanel() {
       }
       
       setLevelLocks({ ...levelLocks, [levelKey]: newState })
-      setInfo(`✓ Level "${levelKey}" erfolgreich ${newState ? 'freigeschaltet' : 'gesperrt'} und gespeichert`)
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => setInfo(''), 3000)
+      pushToast(`✓ Level "${levelKey}" erfolgreich ${newState ? 'freigeschaltet' : 'gesperrt'} und gespeichert`, 'success')
     } catch (error: any) {
       console.error('Error toggling level:', error)
       const msg = typeof error?.message === 'string' ? error.message : 'Fehler beim Speichern des Levels'
-      setInfo(`❌ ${msg}`)
+      pushToast(`❌ ${msg}`, 'error')
     } finally {
       setIsSaving(false)
     }
@@ -258,12 +258,11 @@ export function AdminPanel() {
       const next: Record<string, boolean> = { ...levelLocks }
       for (const l of levels) next[l.key] = true
       setLevelLocks(next)
-      setInfo('✓ Alle Levels erfolgreich freigeschaltet und gespeichert')
-      setTimeout(() => setInfo(''), 3000)
+      pushToast('✓ Alle Levels erfolgreich freigeschaltet und gespeichert','success')
     } catch (error: any) {
       console.error('Error unlocking all levels:', error)
       const msg = typeof error?.message === 'string' ? error.message : 'Fehler beim Speichern der Levels'
-      setInfo(`❌ ${msg}`)
+      pushToast(`❌ ${msg}`,'error')
     } finally {
       setIsSaving(false)
     }
@@ -287,12 +286,11 @@ export function AdminPanel() {
       const next: Record<string, boolean> = { ...levelLocks }
       for (const l of levels) next[l.key] = false
       setLevelLocks(next)
-      setInfo('✓ Alle Levels erfolgreich gesperrt und gespeichert')
-      setTimeout(() => setInfo(''), 3000)
+      pushToast('✓ Alle Levels erfolgreich gesperrt und gespeichert','success')
     } catch (error: any) {
       console.error('Error locking all levels:', error)
       const msg = typeof error?.message === 'string' ? error.message : 'Fehler beim Speichern der Levels'
-      setInfo(`❌ ${msg}`)
+      pushToast(`❌ ${msg}`,'error')
     } finally {
       setIsSaving(false)
     }
@@ -452,18 +450,7 @@ export function AdminPanel() {
           <p className="text-neutral-400 text-sm">Keine Levels gefunden</p>
         )}
         
-        {/* Status-Nachricht für Level-Operationen */}
-        {info && (
-          <div className={`mt-4 p-3 rounded-lg text-sm ${
-            info.includes('✓') 
-              ? 'bg-green-900/20 border border-green-700/50 text-green-300' 
-              : info.includes('❌')
-              ? 'bg-red-900/20 border border-red-700/50 text-red-300'
-              : 'bg-neutral-800/50 border border-neutral-700 text-neutral-300'
-          }`}>
-            {info}
-          </div>
-        )}
+        {/* Toasts übernehmen Statusmeldungen */}
       </div>
 
       {/* Schüler anlegen */}
@@ -488,15 +475,7 @@ export function AdminPanel() {
             {studentBusyId === '__add__' ? 'Speichere…' : 'Anlegen'}
           </button>
         </div>
-        {studentInfo && (
-          <div className={`mt-3 p-3 rounded-lg text-sm ${
-            studentInfo.includes('✓') 
-              ? 'bg-green-900/20 border border-green-700/50 text-green-300' 
-              : 'bg-red-900/20 border border-red-700/50 text-red-300'
-          }`}>
-            {studentInfo}
-          </div>
-        )}
+        {/* Statusmeldungen via Toasts */}
       </div>
 
       {/* Schülerliste */}
@@ -583,16 +562,9 @@ export function AdminPanel() {
       <div className="card p-4">
         <div className="mb-2 font-medium">Setup</div>
         <button className="btn" onClick={initDb}>Datenbank initialisieren</button>
-        {setupInfo && (
-          <div className={`mt-3 p-3 rounded-lg text-sm ${
-            setupInfo.includes('✓') 
-              ? 'bg-green-900/20 border border-green-700/50 text-green-300' 
-              : 'bg-red-900/20 border border-red-700/50 text-red-300'
-          }`}>
-            {setupInfo}
-          </div>
-        )}
+        {/* Statusmeldungen via Toasts */}
       </div>
+      <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
 }
