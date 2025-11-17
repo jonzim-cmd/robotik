@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { loadChecklist } from '@/lib/checklist-loader'
+import { logError } from '@/lib/log'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,8 +14,7 @@ export async function GET(req: NextRequest) {
     const checklist = await loadChecklist(robotKey)
     return NextResponse.json({ checklist })
   } catch (error) {
-    console.error('GET /api/checklist error:', error)
+    logError('GET /api/checklist error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
-

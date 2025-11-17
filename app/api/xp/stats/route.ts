@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ensureMigrations } from '@/lib/migrate'
+import { logError } from '@/lib/log'
 import { getStats } from '@/lib/xp/services/stats'
 
 export const dynamic = 'force-dynamic'
@@ -12,7 +13,7 @@ export async function GET(req: NextRequest) {
     const stats = await getStats(studentId)
     return NextResponse.json({ ok: true, stats })
   } catch (e) {
-    console.error('GET /api/xp/stats error:', e)
+    logError('GET /api/xp/stats error:', e)
     return NextResponse.json({ ok: false, error: 'Internal server error' }, { status: 500 })
   }
 }

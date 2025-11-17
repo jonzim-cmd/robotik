@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Toast, ToastStack } from './toast'
 import { useRouter } from 'next/navigation'
 import { AdminHeader } from './admin-header'
+import { logError } from '@/lib/log'
 
 type Student = { id: string; displayName: string; course?: string }
 type Robot = { key: string; name: string }
@@ -106,7 +107,7 @@ export function AdminPanel() {
         setLocksCache(prev => ({ ...prev, [cacheKey]: locks }))
       }
     } catch (error) {
-      console.error('Error loading levels:', error)
+      logError('Error loading levels:', error)
     }
   }
 
@@ -118,7 +119,7 @@ export function AdminPanel() {
         if (checklistData.checklist?.levels) {
           setLevelsByRobot(prev => ({ ...prev, [robotKey]: checklistData.checklist.levels }))
         }
-      } catch (e) { console.error('ensureLevelsLoaded error', e) }
+      } catch (e) { logError('ensureLevelsLoaded error', e) }
     }
   }
 
@@ -342,7 +343,7 @@ export function AdminPanel() {
       setLocksCache(prev => ({ ...prev, [cacheKey]: next }))
       pushToast(`✓ Level "${levelKey}" erfolgreich ${newState ? 'freigeschaltet' : 'gesperrt'} und gespeichert`, 'success')
     } catch (error: any) {
-      console.error('Error toggling level:', error)
+      logError('Error toggling level:', error)
       const msg = typeof error?.message === 'string' ? error.message : 'Fehler beim Speichern des Levels'
       pushToast(`❌ ${msg}`, 'error')
     } finally {
@@ -374,7 +375,7 @@ export function AdminPanel() {
       setLocksCache(prev => ({ ...prev, [cacheKey]: next }))
       pushToast('✓ Alle Levels erfolgreich freigeschaltet und gespeichert','success')
     } catch (error: any) {
-      console.error('Error unlocking all levels:', error)
+      logError('Error unlocking all levels:', error)
       const msg = typeof error?.message === 'string' ? error.message : 'Fehler beim Speichern der Levels'
       pushToast(`❌ ${msg}`,'error')
     } finally {
@@ -405,7 +406,7 @@ export function AdminPanel() {
       setLocksCache(prev => ({ ...prev, [cacheKey]: next }))
       pushToast('✓ Alle Levels erfolgreich gesperrt und gespeichert','success')
     } catch (error: any) {
-      console.error('Error locking all levels:', error)
+      logError('Error locking all levels:', error)
       const msg = typeof error?.message === 'string' ? error.message : 'Fehler beim Speichern der Levels'
       pushToast(`❌ ${msg}`,'error')
     } finally {

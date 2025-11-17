@@ -1,6 +1,7 @@
 import { getDb } from './db'
 import { LevelLocksTable } from './schema'
 import { and, eq } from 'drizzle-orm'
+import { logError } from './log'
 
 export async function getLevelLocks(robotKey: string, course: string = ''): Promise<Record<string, boolean>> {
   try {
@@ -17,7 +18,7 @@ export async function getLevelLocks(robotKey: string, course: string = ''): Prom
 
     return locksMap
   } catch (error) {
-    console.error('Error fetching level locks:', error)
+    logError('Error fetching level locks:', error)
     return {}
   }
 }

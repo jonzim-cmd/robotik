@@ -4,6 +4,7 @@ import { ProgressTable } from '@/lib/schema'
 import { and, eq } from 'drizzle-orm'
 import { ensureMigrations } from '@/lib/migrate'
 import { onProgressDelta } from '@/lib/xp/services/xp'
+import { logError } from '@/lib/log'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
     }
     await onProgressDelta(robot, student, xpDelta)
   } catch (e) {
-    console.error('XP engine error (non-fatal):', e)
+    logError('XP engine error (non-fatal):', e)
   }
 
   return Response.json({ ok: true })
