@@ -76,6 +76,7 @@ export function AdminPanel() {
   const [levelsByRobot, setLevelsByRobot] = useState<Record<string, Level[]>>({})
   const [levelLocks, setLevelLocks] = useState<Record<string, boolean>>({})
   const [locksCache, setLocksCache] = useState<Record<string, Record<string, boolean>>>({})
+  const [isLoadingLevels, setIsLoadingLevels] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
 
   async function refreshStudents() {
@@ -86,6 +87,9 @@ export function AdminPanel() {
 
   async function loadLevels(robotKey: string, course: string) {
     try {
+      setIsLoadingLevels(true)
+      const cachedLvls = levelsByRobot[robotKey]
+      if (cachedLvls && cachedLvls.length) setLevels(cachedLvls)
       // Load checklist to get all levels
       const checklistRes = await fetch(`/api/checklist?robot=${robotKey}`)
       const checklistData = await checklistRes.json()
@@ -108,6 +112,8 @@ export function AdminPanel() {
       }
     } catch (error) {
       logError('Error loading levels:', error)
+    } finally {
+      setIsLoadingLevels(false)
     }
   }
 
@@ -555,13 +561,13 @@ export function AdminPanel() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <h3 className="font-medium text-lg">Level-Verwaltung</h3>
-              {isSaving && (
+              {(isSaving || isLoadingLevels) && (
                 <div className="flex items-center gap-2 text-sm text-neutral-400">
                   <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <span>Wird gespeichert...</span>
+                  <span>{isSaving ? 'Wird gespeichert...' : 'Lade...'}</span>
                 </div>
               )}
             </div>
@@ -589,6 +595,7 @@ export function AdminPanel() {
                 className="select w-full"
                 value={selectedRobot}
                 onChange={(e) => setSelectedRobot(e.target.value)}
+                disabled={isLoadingLevels || isSaving}
               >
                 {robots.map(robot => (
                   <option key={robot.key} value={robot.key}>{robot.name}</option>
@@ -598,6 +605,7 @@ export function AdminPanel() {
                 className="select w-full"
                 value={selectedCourse}
                 onChange={(e) => setSelectedCourse(e.target.value)}
+                disabled={isLoadingLevels || isSaving}
               >
                 <option value="">(Kein Kurs)</option>
                 {courses.map(c => (
@@ -608,7 +616,16 @@ export function AdminPanel() {
           </div>
         </div>
         
-        {levels.length > 0 ? (
+        {isLoadingLevels ? (
+          <div className="space-y-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="p-3 rounded-md border border-neutral-800 bg-neutral-900/60 animate-pulse">
+                <div className="h-4 w-40 bg-neutral-800 rounded mb-2" />
+                <div className="h-3 w-72 bg-neutral-800/80 rounded" />
+              </div>
+            ))}
+          </div>
+        ) : levels.length > 0 ? (
           <div className="space-y-2">
             {levels.map((level) => {
               const isUnlocked = levelLocks[level.key] || false
