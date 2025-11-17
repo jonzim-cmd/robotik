@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Toast, ToastStack } from './toast'
 import { useRouter } from 'next/navigation'
+import { AdminHeader } from './admin-header'
 
 type Student = { id: string; displayName: string; course?: string }
 type Robot = { key: string; name: string }
@@ -465,26 +466,16 @@ export function AdminPanel() {
   // Admin-Panel (nach erfolgreicher Anmeldung)
   return (
     <div className="space-y-6">
-      {/* Zurück-Button */}
-      <div>
-        <button 
-          className="btn flex items-center gap-2"
-          onClick={() => router.push('/')}
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-          </svg>
-          Zurück zur Hauptseite
-        </button>
-      </div>
-
-      {/* Tabs werden via Portal in den Header (header-secondary) injiziert */}
-      <HeaderTabsPortal
+      <AdminHeader
         activeTab={activeTab}
         onLevels={() => scrollToRef(levelRef)}
         onStudents={() => scrollToRef(studentsRef)}
         onSetup={() => scrollToRef(setupRef)}
       />
+      {/* Zurück-Button */}
+      <div />
+
+      {/* Tabs sind im AdminHeader untergebracht */}
 
       {/* Level-Verwaltung */}
       <div ref={levelRef} className="card p-4">
@@ -757,33 +748,4 @@ export function AdminPanel() {
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
-}
-
-// Portiert die Admin-Tabs in den Header-Sekundärbereich
-function HeaderTabsPortal({ activeTab, onLevels, onStudents, onSetup }: { activeTab: 'levels'|'students'|'setup'; onLevels: () => void; onStudents: () => void; onSetup: () => void }) {
-  const [target, setTarget] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    setTarget(document.getElementById('header-secondary'))
-    return () => setTarget(null)
-  }, [])
-  if (!target) return null
-  return (require('react-dom').createPortal(
-    <div className="mx-auto max-w-5xl">
-      <div className="flex gap-2 p-2">
-        <button
-          className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'levels' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
-          onClick={onLevels}
-        >Level-Verwaltung</button>
-        <button
-          className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'students' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
-          onClick={onStudents}
-        >Schüler-Verwaltung</button>
-        <button
-          className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'setup' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
-          onClick={onSetup}
-        >Setup</button>
-      </div>
-    </div>,
-    target
-  ))
 }
