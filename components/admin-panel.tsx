@@ -35,6 +35,7 @@ export function AdminPanel() {
   const [editCourse, setEditCourse] = useState('')
   const [studentBusyId, setStudentBusyId] = useState<string | null>(null)
   const [openMenuFor, setOpenMenuFor] = useState<string | null>(null)
+  const [resetRobots, setResetRobots] = useState<string[]>([])
   const [studentQuery, setStudentQuery] = useState('')
   const [bulkBusy, setBulkBusy] = useState(false)
   const [activeCourses, setActiveCourses] = useState<string[]>([])
@@ -69,6 +70,7 @@ export function AdminPanel() {
     { key: 'picarx', name: 'PiCar-X (SunFounder, Raspberry Pi 5)' },
   ])
   const [levels, setLevels] = useState<Level[]>([])
+  const [levelsByRobot, setLevelsByRobot] = useState<Record<string, Level[]>>({})
   const [levelLocks, setLevelLocks] = useState<Record<string, boolean>>({})
   const [isSaving, setIsSaving] = useState(false)
 
@@ -85,6 +87,7 @@ export function AdminPanel() {
       const checklistData = await checklistRes.json()
       if (checklistData.checklist?.levels) {
         setLevels(checklistData.checklist.levels)
+        setLevelsByRobot(prev => ({ ...prev, [robotKey]: checklistData.checklist.levels }))
       }
       
       // Load current locks
@@ -96,12 +99,36 @@ export function AdminPanel() {
     }
   }
 
+  async function ensureLevelsLoaded(robotKey: string) {
+    if (!levelsByRobot[robotKey]) {
+      try {
+        const checklistRes = await fetch(`/api/checklist?robot=${robotKey}`)
+        const checklistData = await checklistRes.json()
+        if (checklistData.checklist?.levels) {
+          setLevelsByRobot(prev => ({ ...prev, [robotKey]: checklistData.checklist.levels }))
+        }
+      } catch (e) { console.error('ensureLevelsLoaded error', e) }
+    }
+  }
+
   useEffect(() => {
     if (isAuthenticated) {
       refreshStudents()
       loadLevels(selectedRobot)
     }
   }, [isAuthenticated, selectedRobot])
+
+  // Close actions dropdown when clicking outside
+  useEffect(() => {
+    function onDocMouseDown(e: MouseEvent) {
+      if (!openMenuFor) return
+      const el = e.target as HTMLElement
+      if (el.closest?.('.actions-menu')) return
+      setOpenMenuFor(null)
+    }
+    document.addEventListener('mousedown', onDocMouseDown)
+    return () => document.removeEventListener('mousedown', onDocMouseDown)
+  }, [openMenuFor])
 
   function handlePinSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -340,6 +367,43 @@ export function AdminPanel() {
       pushToast(`❌ ${msg}`,'error')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  async function resetStudentProgress(studentId: string, robotKey: string, mode: 'all' | 'upto', uptoIndex?: number) {
+    setStudentBusyId(studentId)
+    try {
+      const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset_progress', robotKey, upToLevelIndex: mode === 'all' ? null : (uptoIndex ?? null) })
+      })
+      const j = await res.json().catch(() => ({} as any))
+      if (!res.ok || !j.ok) throw new Error(j?.error || 'Fehler beim Zurücksetzen')
+      pushToast('✓ Level-Fortschritt zurückgesetzt', 'success')
+    } catch (e: any) {
+      pushToast(`❌ ${e?.message || 'Fehler beim Zurücksetzen'}`, 'error')
+    } finally {
+      setStudentBusyId(null)
+    }
+  }
+
+  async function resetStudentXP(studentId: string, scope: 'student' | 'robot' = 'student', robotKey?: string) {
+    setStudentBusyId(studentId)
+    try {
+      const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset_xp', scope, robotKey })
+      })
+      const j = await res.json().catch(() => ({} as any))
+      if (!res.ok || !j.ok) throw new Error(j?.error || 'Fehler beim XP-Reset')
+      pushToast('✓ XP zurückgesetzt', 'success')
+      try { window.dispatchEvent(new Event('xp:updated')) } catch {}
+    } catch (e: any) {
+      pushToast(`❌ ${e?.message || 'Fehler beim XP-Reset'}`, 'error')
+    } finally {
+      setStudentBusyId(null)
     }
   }
 
@@ -690,28 +754,69 @@ export function AdminPanel() {
                   <>
                     <button className="btn text-sm" onClick={() => startEdit(s)} disabled={studentBusyId === s.id}>Bearbeiten</button>
                     <div className="relative">
-                      <button className="btn text-sm" onClick={() => setOpenMenuFor(v => v === s.id ? null : s.id)} disabled={studentBusyId === s.id}>Aktionen</button>
+                      <button className="btn text-sm" onClick={async () => {
+                        setOpenMenuFor(v => v === s.id ? null : s.id)
+                        setResetRobots([selectedRobot])
+                        await ensureLevelsLoaded(selectedRobot)
+                      }} disabled={studentBusyId === s.id}>Aktionen</button>
                       {openMenuFor === s.id && (
-                        <div className="absolute right-0 mt-1 w-64 rounded-md border border-neutral-800 bg-neutral-900/95 shadow-xl z-10">
-                          <div className="px-3 py-2 text-xs uppercase text-neutral-400">Zurücksetzen</div>
-                          <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentProgress(s.id, 'all')}>
-                            Levels zurücksetzen – Alle (Robot: {selectedRobot})
-                          </button>
-                          {levels.length > 0 && (
-                            <div className="max-h-52 overflow-auto border-t border-neutral-800">
-                              {levels.map((l, idx) => (
-                                <button key={l.key} className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentProgress(s.id, 'upto', idx)}>
-                                  Levels 0–{idx} zurücksetzen
-                                </button>
-                              ))}
-                            </div>
-                          )}
+                        <div className="actions-menu absolute right-0 mt-1 w-80 rounded-md border border-neutral-800 bg-neutral-900/95 shadow-xl z-10">
+                          <div className="px-3 py-2 text-xs uppercase text-neutral-400">Roboter wählen</div>
+                          <div className="px-3 pb-2 flex flex-wrap gap-3">
+                            {robots.map(r => (
+                              <label key={r.key} className="inline-flex items-center gap-2 text-sm">
+                                <input
+                                  type="checkbox"
+                                  className="accent-brand-500"
+                                  checked={resetRobots.includes(r.key)}
+                                  onChange={async () => {
+                                    setResetRobots(prev => {
+                                      const next = prev.includes(r.key) ? prev.filter(x => x !== r.key) : [...prev, r.key]
+                                      return next
+                                    })
+                                    await ensureLevelsLoaded(r.key)
+                                  }}
+                                />
+                                <span>{r.name}</span>
+                              </label>
+                            ))}
+                          </div>
                           <div className="border-t border-neutral-800" />
+                          <div className="px-3 py-2 text-xs uppercase text-neutral-400">Levels zurücksetzen</div>
+                          <div className="max-h-64 overflow-auto">
+                            {resetRobots.length === 0 ? (
+                              <div className="px-3 pb-3 text-sm text-neutral-500">Bitte mindestens einen Roboter wählen.</div>
+                            ) : (
+                              <div className="space-y-2 pb-2">
+                                <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={async () => {
+                                  for (const rk of resetRobots) await resetStudentProgress(s.id, rk, 'all')
+                                }}>
+                                  Alle gewählten Roboter: Alle Levels
+                                </button>
+                                {resetRobots.map(rk => (
+                                  <div key={rk} className="border-t border-neutral-800 pt-2">
+                                    <div className="px-3 py-1 text-xs text-neutral-400">{robots.find(r => r.key === rk)?.name}</div>
+                                    <div className="max-h-40 overflow-auto">
+                                      {(levelsByRobot[rk] || []).map((l, idx) => (
+                                        <button key={l.key} className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentProgress(s.id, rk, 'upto', idx)}>
+                                          Levels 0–{idx} zurücksetzen
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          <div className="border-t border-neutral-800" />
+                          <div className="px-3 py-2 text-xs uppercase text-neutral-400">XP</div>
                           <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentXP(s.id, 'student')}>
                             XP zurücksetzen – gesamt
                           </button>
-                          <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentXP(s.id, 'robot')}>
-                            XP zurücksetzen – nur Robot ({selectedRobot})
+                          <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={async () => {
+                            for (const rk of resetRobots) await resetStudentXP(s.id, 'robot', rk)
+                          }}>
+                            XP zurücksetzen – nur gewählte Roboter ({resetRobots.length || '0'})
                           </button>
                         </div>
                       )}
