@@ -23,6 +23,7 @@ export function AdminPanel() {
   const [info, setInfo] = useState('')
   const [studentInfo, setStudentInfo] = useState('')
   const [setupInfo, setSetupInfo] = useState('')
+  const [initBusy, setInitBusy] = useState(false)
   const [toasts, setToasts] = useState<Toast[]>([])
   function pushToast(text: string, variant: Toast['variant'] = 'info', ttl = 3000) {
     const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
@@ -283,10 +284,23 @@ export function AdminPanel() {
   }
 
   async function initDb() {
-    const res = await fetch('/api/admin/init', { method: 'POST' })
-    const r = await res.json()
-    setSetupInfo(r.ok ? '✓ Datenbank erfolgreich initialisiert' : r.error || '❌ Fehler')
-    setTimeout(() => setSetupInfo(''), 3000)
+    if (initBusy) return
+    setInitBusy(true)
+    try {
+      const res = await fetch('/api/admin/init', { method: 'POST' })
+      const r = await res.json().catch(() => ({} as any))
+      if (!res.ok || !r.ok) {
+        const msg = r?.error || 'Fehler bei der Initialisierung'
+        pushToast(`❌ ${msg}`, 'error')
+      } else {
+        pushToast('✓ Datenbank erfolgreich initialisiert', 'success')
+      }
+    } catch (e: any) {
+      pushToast(`❌ ${e?.message || 'Fehler bei der Initialisierung'}`, 'error')
+    } finally {
+      setInitBusy(false)
+      setSetupInfo('')
+    }
   }
 
   async function toggleLevel(levelKey: string) {
@@ -834,7 +848,12 @@ export function AdminPanel() {
       {/* Setup (ans Ende verschoben) */}
       <div ref={setupRef} className="card p-4">
         <div className="mb-2 font-medium">Setup</div>
-        <button className="btn" onClick={initDb}>Datenbank initialisieren</button>
+        <button className="btn" onClick={initDb} disabled={initBusy}>
+          {initBusy ? 'Initialisiere…' : 'Datenbank initialisieren'}
+        </button>
+        {setupInfo ? (
+          <div className="mt-2 text-sm text-neutral-400">{setupInfo}</div>
+        ) : null}
         {/* Statusmeldungen via Toasts */}
       </div>
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
