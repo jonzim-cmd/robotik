@@ -453,21 +453,6 @@ export function AdminPanel() {
         )}
       </div>
 
-      {/* Setup */}
-      <div className="card p-4">
-        <div className="mb-2 font-medium">Setup</div>
-        <button className="btn" onClick={initDb}>Datenbank initialisieren</button>
-        {setupInfo && (
-          <div className={`mt-3 p-3 rounded-lg text-sm ${
-            setupInfo.includes('✓') 
-              ? 'bg-green-900/20 border border-green-700/50 text-green-300' 
-              : 'bg-red-900/20 border border-red-700/50 text-red-300'
-          }`}>
-            {setupInfo}
-          </div>
-        )}
-      </div>
-
       {/* Schüler anlegen */}
       <div className="card p-4">
         <div className="mb-2 font-medium">Schüler anlegen</div>
@@ -541,6 +526,21 @@ export function AdminPanel() {
             </li>
           ))}
         </ul>
+      </div>
+
+      {/* Setup (ans Ende verschoben) */}
+      <div className="card p-4">
+        <div className="mb-2 font-medium">Setup</div>
+        <button className="btn" onClick={initDb}>Datenbank initialisieren</button>
+        {setupInfo && (
+          <div className={`mt-3 p-3 rounded-lg text-sm ${
+            setupInfo.includes('✓') 
+              ? 'bg-green-900/20 border border-green-700/50 text-green-300' 
+              : 'bg-red-900/20 border border-red-700/50 text-red-300'
+          }`}>
+            {setupInfo}
+          </div>
+        )}
       </div>
     </div>
   )
