@@ -97,17 +97,26 @@ export function AdminPanel() {
   }
 
   async function addStudent() {
-    if (!name.trim()) return
-    const res = await fetch('/api/admin/students', {
-      method: 'POST', 
-      headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify({ displayName: name })
-    })
-    const r = await res.json()
-    setStudentInfo(r.ok ? '✓ Schüler erfolgreich angelegt' : r.error || '❌ Fehler')
-    setTimeout(() => setStudentInfo(''), 3000)
-    setName('')
-    refreshStudents()
+    const newName = name.trim()
+    if (!newName || studentBusyId === '__add__') return
+    setStudentBusyId('__add__')
+    try {
+      const res = await fetch('/api/admin/students', {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ displayName: newName })
+      })
+      const r = await res.json()
+      if (!res.ok || !r.ok) throw new Error(r?.error || 'Fehler')
+      setStudentInfo('✓ Schüler erfolgreich angelegt')
+      setStudents(prev => [r.student, ...prev])
+      setName('')
+    } catch (e: any) {
+      setStudentInfo(`❌ ${e?.message || 'Fehler'}`)
+    } finally {
+      setTimeout(() => setStudentInfo(''), 3000)
+      setStudentBusyId(null)
+    }
   }
 
   function startEdit(student: Student) {
@@ -470,7 +479,9 @@ export function AdminPanel() {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addStudent()}
           />
-          <button className="btn" onClick={addStudent}>Anlegen</button>
+          <button className="btn" onClick={addStudent} disabled={studentBusyId === '__add__'}>
+            {studentBusyId === '__add__' ? 'Speichere…' : 'Anlegen'}
+          </button>
         </div>
         {studentInfo && (
           <div className={`mt-3 p-3 rounded-lg text-sm ${

@@ -1,8 +1,9 @@
 "use client"
-import { useEffect, useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Markdown, MarkdownInline } from '@/lib/markdown'
 import { stripMarkdown } from '@/lib/text'
 import type { Checklist } from '@/lib/checklist-loader'
+import { useProgressQueue } from './hooks/use-progress-queue'
 
 type Props = { robotKey: string; studentId: string; checklist: Checklist }
 
@@ -11,9 +12,9 @@ type ProgressMap = Record<string, ProgressEntry>
 
 export function ChecklistView({ robotKey, studentId, checklist }: Props) {
   const [tab, setTab] = useState(0)
-  const [isSaving, startTransition] = useTransition()
   const [progress, setProgress] = useState<ProgressMap>({})
   const [textValues, setTextValues] = useState<Record<string, string>>({})
+  const { isSaving, queue } = useProgressQueue(robotKey, studentId)
 
   // load initial progress (DB only)
   useEffect(() => {
@@ -51,13 +52,7 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
     const next: ProgressMap = { ...progress, [itemKey]: entry }
     setProgress(next as ProgressMap)
     if (!studentId) return
-    startTransition(async () => {
-      await fetch('/api/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ robot: robotKey, student: studentId, delta: { [itemKey]: entry } })
-      })
-    })
+    queue({ [itemKey]: entry })
   }
 
   function saveText(itemKey: string, text: string) {
@@ -66,13 +61,7 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
     setProgress(next)
     setTextValues({ ...textValues, [itemKey]: text })
     if (!studentId) return
-    startTransition(async () => {
-      await fetch('/api/progress', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ robot: robotKey, student: studentId, delta: { [itemKey]: { status, payload: { text } } } })
-      })
-    })
+    queue({ [itemKey]: { status, payload: { text } } as any })
   }
 
   const levelStats = useMemo(() => {

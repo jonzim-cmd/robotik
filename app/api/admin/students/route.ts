@@ -22,8 +22,9 @@ export async function POST(req: NextRequest) {
     const name = (body.displayName || '').toString().trim()
     if (!name) return Response.json({ ok: false, error: 'Name fehlt' }, { status: 400 })
     const db = await getDb()
-    await db.insert(StudentsTable).values({ id: randomId(), displayName: name })
-    return Response.json({ ok: true })
+    const id = randomId()
+    await db.insert(StudentsTable).values({ id, displayName: name })
+    return Response.json({ ok: true, student: { id, displayName: name } })
   } catch (e: any) {
     return Response.json({ ok: false, error: e?.message || 'Fehler' }, { status: 500 })
   }
