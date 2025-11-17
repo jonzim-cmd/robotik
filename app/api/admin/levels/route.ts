@@ -4,6 +4,7 @@ import { LevelLocksTable } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 import { runMigrations } from '@/lib/migrate'
 import { resolveDbUrl } from '@/lib/db-url'
+import { sql as vsql } from '@vercel/postgres'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -116,6 +117,29 @@ export async function POST(req: NextRequest) {
       console.info('POST /api/admin/levels env:', visible, 'resolved:', !!url)
     }
     const body = await req.json()
+
+    // Bulk mode: { robotKey, updates: [{ levelKey, unlocked }, ...] }
+    if (Array.isArray(body?.updates)) {
+      const robotKey = body.robotKey
+      const updates = body.updates as Array<{ levelKey: string; unlocked: boolean }>
+      if (!robotKey) {
+        return NextResponse.json({ error: 'robotKey is required' }, { status: 400 })
+      }
+      const rows = updates.filter(u => u && typeof u.levelKey === 'string' && typeof u.unlocked === 'boolean')
+      if (rows.length === 0) {
+        return NextResponse.json({ ok: true })
+      }
+      const now = new Date()
+      const tuples = rows.map(u => vsql`(${robotKey}, ${u.levelKey}, ${u.unlocked}, ${now})`)
+      await vsql`INSERT INTO level_locks (robot_key, level_key, unlocked, updated_at)
+        VALUES ${vsql.join(tuples, vsql`, `)}
+        ON CONFLICT (robot_key, level_key) DO UPDATE SET
+          unlocked = EXCLUDED.unlocked,
+          updated_at = EXCLUDED.updated_at`
+      return NextResponse.json({ ok: true })
+    }
+
+    // Single update mode: { robotKey, levelKey, unlocked }
     const { robotKey, levelKey, unlocked } = body
 
     if (!robotKey || !levelKey || typeof unlocked !== 'boolean') {

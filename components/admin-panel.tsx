@@ -226,23 +226,22 @@ export function AdminPanel() {
   async function unlockAllLevels() {
     setIsSaving(true)
     try {
-      for (const level of levels) {
-        const res = await fetch('/api/admin/levels', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            robotKey: selectedRobot,
-            levelKey: level.key,
-            unlocked: true
-          })
+      const res = await fetch('/api/admin/levels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          robotKey: selectedRobot,
+          updates: levels.map(l => ({ levelKey: l.key, unlocked: true }))
         })
-        
-        if (!res.ok) {
-          const j = await res.json().catch(() => ({} as any))
-          throw new Error(j?.error || 'API-Fehler')
-        }
+      })
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({} as any))
+        throw new Error(j?.error || 'API-Fehler')
       }
-      await loadLevels(selectedRobot)
+      // Optimistisch UI aktualisieren
+      const next: Record<string, boolean> = { ...levelLocks }
+      for (const l of levels) next[l.key] = true
+      setLevelLocks(next)
       setInfo('✓ Alle Levels erfolgreich freigeschaltet und gespeichert')
       setTimeout(() => setInfo(''), 3000)
     } catch (error: any) {
@@ -257,23 +256,21 @@ export function AdminPanel() {
   async function lockAllLevels() {
     setIsSaving(true)
     try {
-      for (const level of levels) {
-        const res = await fetch('/api/admin/levels', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            robotKey: selectedRobot,
-            levelKey: level.key,
-            unlocked: false
-          })
+      const res = await fetch('/api/admin/levels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          robotKey: selectedRobot,
+          updates: levels.map(l => ({ levelKey: l.key, unlocked: false }))
         })
-        
-        if (!res.ok) {
-          const j = await res.json().catch(() => ({} as any))
-          throw new Error(j?.error || 'API-Fehler')
-        }
+      })
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({} as any))
+        throw new Error(j?.error || 'API-Fehler')
       }
-      await loadLevels(selectedRobot)
+      const next: Record<string, boolean> = { ...levelLocks }
+      for (const l of levels) next[l.key] = false
+      setLevelLocks(next)
       setInfo('✓ Alle Levels erfolgreich gesperrt und gespeichert')
       setTimeout(() => setInfo(''), 3000)
     } catch (error: any) {
