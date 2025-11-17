@@ -79,8 +79,20 @@ export async function runMigrations() {
   );`
 
   // Idempotency/uniques for xp events
-  await sql`CREATE UNIQUE INDEX IF NOT EXISTS xp_unique_item_complete ON xp_events (student_id, item_key, type) WHERE item_key IS NOT NULL AND type = 'item_complete';`
-  await sql`CREATE UNIQUE INDEX IF NOT EXISTS xp_unique_level_complete ON xp_events (student_id, level_key, type) WHERE level_key IS NOT NULL AND type = 'level_complete';`
+  // Old indexes (without robot_key) could suppress XP across robots if item/level keys overlap.
+  // Drop them if present and create corrected ones scoped by robot_key.
+  await sql`DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'xp_unique_item_complete') THEN
+      DROP INDEX xp_unique_item_complete;
+    END IF;
+  END $$;`;
+  await sql`DO $$ BEGIN
+    IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'xp_unique_level_complete') THEN
+      DROP INDEX xp_unique_level_complete;
+    END IF;
+  END $$;`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS xp_unique_item_complete_v2 ON xp_events (student_id, robot_key, item_key, type) WHERE item_key IS NOT NULL AND type = 'item_complete';`;
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS xp_unique_level_complete_v2 ON xp_events (student_id, robot_key, level_key, type) WHERE level_key IS NOT NULL AND type = 'level_complete';`
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS xp_unique_mastery ON xp_events (student_id, robot_key, type, tier) WHERE tier IS NOT NULL AND type = 'mastery_tier';`
   await sql`CREATE UNIQUE INDEX IF NOT EXISTS badges_unique_key ON badges_awarded (student_id, badge_key, robot_key);`
 

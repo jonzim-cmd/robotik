@@ -53,19 +53,29 @@ export async function onProgressDelta(robotKey: string, studentId: string, delta
     }
 
     // Update robot-level counters and grant mastery tiers if thresholds crossed
-    // Recount items done for this robot
-    const [{ count }] = await tx.execute(dsql`SELECT COUNT(*)::int AS count FROM ${ProgressTable} WHERE ${ProgressTable.robotKey} = ${robotKey} AND ${ProgressTable.studentId} = ${studentId} AND ${ProgressTable.status} = 'done'` as any) as any
-    const itemsDone = Number(count || 0)
+    // Recount items done for this robot (robust for vercel-postgres driver shape)
+    const res: any = await tx.execute(
+      dsql`SELECT COUNT(*)::int AS count FROM ${ProgressTable} WHERE ${ProgressTable.robotKey} = ${robotKey} AND ${ProgressTable.studentId} = ${studentId} AND ${ProgressTable.status} = 'done'` as any
+    )
+    const itemsDone = Number((res?.rows?.[0]?.count) ?? 0)
 
     // Ensure robot stats row exists and update robot XP and items count
-    await tx.insert(StudentRobotStatsTable).values({ studentId, robotKey, robotXpTotal: robotStats?.robotXpTotal || 0, itemsDoneCount: itemsDone, levelsCompleteCount: robotStats?.levelsCompleteCount || 0, masteryTier: robotStats?.masteryTier || 0 })
-      .onConflictDoUpdate({
-        target: [StudentRobotStatsTable.studentId, StudentRobotStatsTable.robotKey],
-        set: {
-          robotXpTotal: dsql`${StudentRobotStatsTable.robotXpTotal} + ${robotXpAcc}`,
-          itemsDoneCount: itemsDone,
-        },
-      })
+    // Ensure robot stats row exists and increment XP correctly on both insert and update
+    await tx.insert(StudentRobotStatsTable).values({
+      studentId,
+      robotKey,
+      // On first insert, include the newly earned XP
+      robotXpTotal: (robotStats?.robotXpTotal || 0) + robotXpAcc,
+      itemsDoneCount: itemsDone,
+      levelsCompleteCount: robotStats?.levelsCompleteCount || 0,
+      masteryTier: robotStats?.masteryTier || 0,
+    }).onConflictDoUpdate({
+      target: [StudentRobotStatsTable.studentId, StudentRobotStatsTable.robotKey],
+      set: {
+        robotXpTotal: dsql`${StudentRobotStatsTable.robotXpTotal} + ${robotXpAcc}`,
+        itemsDoneCount: itemsDone,
+      },
+    })
 
     // Grant mastery tiers
     let currentTier = robotStats?.masteryTier || 0
@@ -96,4 +106,3 @@ export async function onProgressDelta(robotKey: string, studentId: string, delta
       })
   })
 }
-
