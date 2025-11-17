@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getRules, levelFromTotalXP } from '@/lib/xp/services/rules'
 import { xpLevelTitle } from '@/lib/xp/level-titles'
 
@@ -22,6 +22,7 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
   const [totalXp, setTotalXp] = useState<number>(0)
   const [floaters, setFloaters] = useState<Array<{ id: number; drift: number }>>([])
   const rules = getRules(robotKey)
+  const totalRef = useRef<number>(0)
 
   useEffect(() => {
     let cancelled = false
@@ -34,11 +35,16 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
           // Detect XP gains to trigger floater animation
           const newTotal = j.stats.student.totalXP
           const { level: newLevel, xpInLevel: newXpInLevel, nextLevelXP: nextXP } = levelFromTotalXP(newTotal, rules.levelCurve)
-          setLevel(newLevel)
-          setXpInLevel(newXpInLevel)
-          setTotalXp(newTotal)
+          // Only apply server values if they don't regress total XP
+          if (newTotal >= totalRef.current) {
+            setLevel(newLevel)
+            setXpInLevel(newXpInLevel)
+            setTotalXp(newTotal)
+            totalRef.current = newTotal
+          }
+          // Floaters only for positive gains over last known total
           if (newTotal > prevTotalXp) {
-            const delta = newTotal - prevTotalXp
+            const delta = Math.max(0, newTotal - prevTotalXp)
             const count = Math.max(1, Math.min(3, Math.round(delta / 10)))
             const now = Date.now()
             const items = Array.from({ length: count }, (_, i) => ({ id: now + i, drift: (Math.random() - 0.5) * 14 }))
@@ -61,12 +67,13 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
       if (!e?.detail) return
       const { studentId: sid, robotKey: rk, delta } = e.detail
       if (sid !== studentId || rk !== robotKey || !delta) return
-      const newTotal = totalXp + delta
+      const newTotal = (totalRef.current || 0) + delta
       const { level: newLevel, xpInLevel: newXpInLevel, nextLevelXP: nextXP } = levelFromTotalXP(newTotal, rules.levelCurve)
       setLevel(newLevel)
       setXpInLevel(newXpInLevel)
       setNextLevelXP(nextXP)
       setTotalXp(newTotal)
+      totalRef.current = newTotal
       const count = Math.max(1, Math.min(3, Math.round(delta / 10)))
       const now = Date.now()
       const items = Array.from({ length: count }, (_, i) => ({ id: now + i, drift: (Math.random() - 0.5) * 14 }))
@@ -90,9 +97,7 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
       <span className="font-semibold">{xpLevelTitle(level)} <span className="text-neutral-400 font-normal">(L{level})</span></span>
       <span className="text-neutral-400">•</span>
       <span>{xpInLevel}{nextLevelXP ? `/${nextLevelXP}` : ''} XP</span>
-      {robotTier > 0 && (
-        <span className="ml-1 rounded bg-brand-950/30 text-brand-200 border border-brand-700/30 px-2 py-0.5" title="Meisterschafts-Stufe für diesen Roboter">Meisterstufe {robotTier}</span>
-      )}
+      {/* Robot mastery tier intentionally not shown to reduce confusion */}
       {/* XP gain floaters */}
       <div className="pointer-events-none absolute inset-0 overflow-visible">
         {floaters.map(f => (
