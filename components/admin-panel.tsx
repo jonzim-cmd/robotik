@@ -64,6 +64,7 @@ export function AdminPanel() {
   const visibleStudents = (studentQuery ? filteredStudents : (showAllStudents ? filteredStudents : filteredStudents.slice(0, 3)))
   
   const [selectedRobot, setSelectedRobot] = useState('rvr_plus')
+  const [selectedCourse, setSelectedCourse] = useState<string>('')
   const [robots] = useState<Robot[]>([
     { key: 'rvr_plus', name: 'RVR+ Sphero' },
     { key: 'cutebot_pro', name: 'Cutebot Pro (Micro:Bit)' },
@@ -80,7 +81,7 @@ export function AdminPanel() {
     setStudents(data.students || [])
   }
 
-  async function loadLevels(robotKey: string) {
+  async function loadLevels(robotKey: string, course: string) {
     try {
       // Load checklist to get all levels
       const checklistRes = await fetch(`/api/checklist?robot=${robotKey}`)
@@ -91,7 +92,8 @@ export function AdminPanel() {
       }
       
       // Load current locks
-      const locksRes = await fetch(`/api/admin/levels?robot=${robotKey}`)
+      const q = new URLSearchParams({ robot: robotKey, course: course || '' }).toString()
+      const locksRes = await fetch(`/api/admin/levels?${q}`)
       const locksData = await locksRes.json()
       setLevelLocks(locksData.locks || {})
     } catch (error) {
@@ -114,9 +116,15 @@ export function AdminPanel() {
   useEffect(() => {
     if (isAuthenticated) {
       refreshStudents()
-      loadLevels(selectedRobot)
+      loadLevels(selectedRobot, selectedCourse)
     }
-  }, [isAuthenticated, selectedRobot])
+  }, [isAuthenticated, selectedRobot, selectedCourse])
+
+  // Keep selectedCourse valid when course list changes
+  useEffect(() => {
+    setSelectedCourse(prev => (prev && courses.includes(prev)) ? prev : (courses[0] || ''))
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [courses.join('\u0001')])
 
   // Close actions dropdown when clicking outside
   useEffect(() => {
@@ -292,6 +300,7 @@ export function AdminPanel() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           robotKey: selectedRobot,
+          course: selectedCourse || '',
           levelKey,
           unlocked: newState
         })
@@ -321,6 +330,7 @@ export function AdminPanel() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           robotKey: selectedRobot,
+          course: selectedCourse || '',
           updates: levels.map(l => ({ levelKey: l.key, unlocked: true }))
         })
       })
@@ -350,6 +360,7 @@ export function AdminPanel() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           robotKey: selectedRobot,
+          course: selectedCourse || '',
           updates: levels.map(l => ({ levelKey: l.key, unlocked: false }))
         })
       })
@@ -539,16 +550,28 @@ export function AdminPanel() {
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-sm text-neutral-400 mb-2">Roboter wählen:</label>
-            <select 
-              className="select w-full"
-              value={selectedRobot}
-              onChange={(e) => setSelectedRobot(e.target.value)}
-            >
-              {robots.map(robot => (
-                <option key={robot.key} value={robot.key}>{robot.name}</option>
-              ))}
-            </select>
+            <label className="block text-sm text-neutral-400 mb-2">Roboter & Kurs wählen:</label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <select 
+                className="select w-full"
+                value={selectedRobot}
+                onChange={(e) => setSelectedRobot(e.target.value)}
+              >
+                {robots.map(robot => (
+                  <option key={robot.key} value={robot.key}>{robot.name}</option>
+                ))}
+              </select>
+              <select
+                className="select w-full"
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+              >
+                <option value="">(Kein Kurs)</option>
+                {courses.map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
         

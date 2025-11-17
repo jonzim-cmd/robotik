@@ -1,14 +1,14 @@
 import { getDb } from './db'
 import { LevelLocksTable } from './schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 
-export async function getLevelLocks(robotKey: string): Promise<Record<string, boolean>> {
+export async function getLevelLocks(robotKey: string, course: string = ''): Promise<Record<string, boolean>> {
   try {
     const db = await getDb()
     const locks = await db
       .select()
       .from(LevelLocksTable)
-      .where(eq(LevelLocksTable.robotKey, robotKey))
+      .where(and(eq(LevelLocksTable.robotKey, robotKey), eq(LevelLocksTable.course, course || '')))
 
     const locksMap: Record<string, boolean> = {}
     for (const lock of locks) {
@@ -33,4 +33,3 @@ export function filterUnlockedLevels<T extends { key: string }>(
   
   return levels.filter(level => locks[level.key] === true)
 }
-

@@ -26,11 +26,12 @@ export const LevelLocksTable = pgTable(
   'level_locks',
   {
     robotKey: text('robot_key').notNull(),
+    course: text('course').notNull().default(''),
     levelKey: text('level_key').notNull(),
     unlocked: boolean('unlocked').notNull().default(false),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
   },
   (t) => ({
-    pk: primaryKey({ columns: [t.robotKey, t.levelKey] }),
+    pk: primaryKey({ columns: [t.robotKey, t.course, t.levelKey] }),
   })
 )

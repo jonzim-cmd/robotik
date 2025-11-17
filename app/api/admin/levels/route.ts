@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { LevelLocksTable } from '@/lib/schema'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { runMigrations } from '@/lib/migrate'
 import { resolveDbUrl } from '@/lib/db-url'
 import { sql as dsql } from 'drizzle-orm'
@@ -41,6 +41,7 @@ export async function GET(req: NextRequest) {
       console.info('GET /api/admin/levels env:', visible, 'resolved:', !!url)
     }
     const robotKey = req.nextUrl.searchParams.get('robot')
+    const course = (req.nextUrl.searchParams.get('course') || '').toString()
     if (!robotKey) {
       return NextResponse.json({ error: 'robot parameter required' }, { status: 400 })
     }
@@ -49,7 +50,7 @@ export async function GET(req: NextRequest) {
     const locks = await db
       .select()
       .from(LevelLocksTable)
-      .where(eq(LevelLocksTable.robotKey, robotKey))
+      .where(and(eq(LevelLocksTable.robotKey, robotKey), eq(LevelLocksTable.course, course)))
 
     const locksMap: Record<string, boolean> = {}
     for (const lock of locks) {
@@ -121,6 +122,7 @@ export async function POST(req: NextRequest) {
     // Bulk mode: { robotKey, updates: [{ levelKey, unlocked }, ...] }
     if (Array.isArray(body?.updates)) {
       const robotKey = body.robotKey
+      const course = (body.course || '').toString()
       const updates = body.updates as Array<{ levelKey: string; unlocked: boolean }>
       if (!robotKey) {
         return NextResponse.json({ error: 'robotKey is required' }, { status: 400 })
@@ -132,6 +134,7 @@ export async function POST(req: NextRequest) {
       const db = await getDb()
       const values = rows.map(u => ({
         robotKey,
+        course,
         levelKey: u.levelKey,
         unlocked: u.unlocked,
         updatedAt: new Date(),
@@ -140,7 +143,7 @@ export async function POST(req: NextRequest) {
         .insert(LevelLocksTable)
         .values(values)
         .onConflictDoUpdate({
-          target: [LevelLocksTable.robotKey, LevelLocksTable.levelKey],
+          target: [LevelLocksTable.robotKey, LevelLocksTable.course, LevelLocksTable.levelKey],
           set: {
             unlocked: dsql`excluded.unlocked`,
             updatedAt: dsql`excluded.updated_at`,
@@ -151,6 +154,7 @@ export async function POST(req: NextRequest) {
 
     // Single update mode: { robotKey, levelKey, unlocked }
     const { robotKey, levelKey, unlocked } = body
+    const course = (body.course || '').toString()
 
     if (!robotKey || !levelKey || typeof unlocked !== 'boolean') {
       return NextResponse.json({ error: 'robotKey, levelKey, and unlocked are required' }, { status: 400 })
@@ -161,12 +165,13 @@ export async function POST(req: NextRequest) {
       .insert(LevelLocksTable)
       .values({
         robotKey,
+        course,
         levelKey,
         unlocked,
         updatedAt: new Date(),
       })
       .onConflictDoUpdate({
-        target: [LevelLocksTable.robotKey, LevelLocksTable.levelKey],
+        target: [LevelLocksTable.robotKey, LevelLocksTable.course, LevelLocksTable.levelKey],
         set: {
           unlocked,
           updatedAt: new Date(),

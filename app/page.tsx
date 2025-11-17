@@ -13,11 +13,13 @@ export default async function Page() {
 
   const robots = await getRobots()
   const students = await getStudents()
+  const selected = students.find(s => s.id === selectedStudent)
+  const selectedCourse = selected?.course || ''
   let checklist = selectedStudent ? await loadChecklist(selectedRobot) : null
   
   // Filter levels based on locks
   if (checklist) {
-    const locks = await getLevelLocks(selectedRobot)
+    const locks = await getLevelLocks(selectedRobot, selectedCourse)
     checklist = {
       ...checklist,
       levels: filterUnlockedLevels(checklist.levels, locks)

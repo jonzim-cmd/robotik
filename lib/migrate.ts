@@ -32,11 +32,21 @@ export async function runMigrations() {
 
   await sql`CREATE TABLE IF NOT EXISTS level_locks (
     robot_key text NOT NULL,
+    course text,
     level_key text NOT NULL,
     unlocked boolean NOT NULL DEFAULT false,
     updated_at timestamp DEFAULT now() NOT NULL,
     PRIMARY KEY (robot_key, level_key)
   );`
+
+  // Add course column for per-course locks and migrate primary key to include course
+  await sql`ALTER TABLE level_locks ADD COLUMN IF NOT EXISTS course text;`
+  // Normalize nulls to empty string and set default
+  await sql`UPDATE level_locks SET course = '' WHERE course IS NULL;`
+  await sql`ALTER TABLE level_locks ALTER COLUMN course SET DEFAULT '';`
+  // Replace PK to include course
+  await sql`ALTER TABLE level_locks DROP CONSTRAINT IF EXISTS level_locks_pkey;`
+  await sql`ALTER TABLE level_locks ADD PRIMARY KEY (robot_key, course, level_key);`
 
   // XP system tables (beta, additive)
   await sql`CREATE TABLE IF NOT EXISTS xp_events (
