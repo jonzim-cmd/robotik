@@ -4,7 +4,7 @@ import { LevelLocksTable } from '@/lib/schema'
 import { eq } from 'drizzle-orm'
 import { runMigrations } from '@/lib/migrate'
 import { resolveDbUrl } from '@/lib/db-url'
-import { sql as vsql } from '@vercel/postgres'
+import { sql as dsql } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -129,15 +129,23 @@ export async function POST(req: NextRequest) {
       if (rows.length === 0) {
         return NextResponse.json({ ok: true })
       }
-      // @vercel/postgres sql template expects primitives; use ISO string for timestamp
-      const nowIso = new Date().toISOString()
-      const tuples = rows.map(u => vsql`(${robotKey}, ${u.levelKey}, ${u.unlocked}, ${nowIso})`)
-      const v: any = vsql
-      await vsql`INSERT INTO level_locks (robot_key, level_key, unlocked, updated_at)
-        VALUES ${v.join(tuples, vsql`, `)}
-        ON CONFLICT (robot_key, level_key) DO UPDATE SET
-          unlocked = EXCLUDED.unlocked,
-          updated_at = EXCLUDED.updated_at`
+      const db = await getDb()
+      const values = rows.map(u => ({
+        robotKey,
+        levelKey: u.levelKey,
+        unlocked: u.unlocked,
+        updatedAt: new Date(),
+      }))
+      await db
+        .insert(LevelLocksTable)
+        .values(values)
+        .onConflictDoUpdate({
+          target: [LevelLocksTable.robotKey, LevelLocksTable.levelKey],
+          set: {
+            unlocked: dsql`excluded.unlocked`,
+            updatedAt: dsql`excluded.updated_at`,
+          },
+        })
       return NextResponse.json({ ok: true })
     }
 
