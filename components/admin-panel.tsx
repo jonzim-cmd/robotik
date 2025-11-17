@@ -19,9 +19,12 @@ export function AdminPanel() {
   const [name, setName] = useState('')
   const [info, setInfo] = useState('')
   const [studentInfo, setStudentInfo] = useState('')
+  const [setupInfo, setSetupInfo] = useState('')
   const [editId, setEditId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [studentBusyId, setStudentBusyId] = useState<string | null>(null)
+  const [studentQuery, setStudentQuery] = useState('')
+  const filteredStudents = students.filter(s => s.displayName.toLowerCase().includes(studentQuery.toLowerCase()))
   
   const [selectedRobot, setSelectedRobot] = useState('rvr_plus')
   const [robots] = useState<Robot[]>([
@@ -184,8 +187,8 @@ export function AdminPanel() {
   async function initDb() {
     const res = await fetch('/api/admin/init', { method: 'POST' })
     const r = await res.json()
-    setStudentInfo(r.ok ? '✓ Datenbank erfolgreich initialisiert' : r.error || '❌ Fehler')
-    setTimeout(() => setStudentInfo(''), 3000)
+    setSetupInfo(r.ok ? '✓ Datenbank erfolgreich initialisiert' : r.error || '❌ Fehler')
+    setTimeout(() => setSetupInfo(''), 3000)
   }
 
   async function toggleLevel(levelKey: string) {
@@ -454,13 +457,13 @@ export function AdminPanel() {
       <div className="card p-4">
         <div className="mb-2 font-medium">Setup</div>
         <button className="btn" onClick={initDb}>Datenbank initialisieren</button>
-        {studentInfo && (
+        {setupInfo && (
           <div className={`mt-3 p-3 rounded-lg text-sm ${
-            studentInfo.includes('✓') 
+            setupInfo.includes('✓') 
               ? 'bg-green-900/20 border border-green-700/50 text-green-300' 
               : 'bg-red-900/20 border border-red-700/50 text-red-300'
           }`}>
-            {studentInfo}
+            {setupInfo}
           </div>
         )}
       </div>
@@ -494,8 +497,16 @@ export function AdminPanel() {
       {/* Schülerliste */}
       <div className="card p-4">
         <div className="mb-2 font-medium">Schüler</div>
+        <div className="mb-3">
+          <input
+            className="input w-full"
+            placeholder="Suchen…"
+            value={studentQuery}
+            onChange={(e) => setStudentQuery(e.target.value)}
+          />
+        </div>
         <ul className="space-y-1">
-          {students.map(s => (
+          {filteredStudents.map(s => (
             <li key={s.id} className="flex items-center justify-between rounded-md border border-neutral-800 bg-neutral-900/60 p-2 gap-2">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 {editId === s.id ? (
