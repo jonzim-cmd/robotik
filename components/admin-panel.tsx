@@ -129,7 +129,7 @@ export function AdminPanel() {
       })
       const r = await res.json()
       if (!res.ok || !r.ok) throw new Error(r?.error || 'Fehler')
-      pushToast('✓ Schüler erfolgreich angelegt', 'success')
+      pushToast('Schüler erfolgreich angelegt', 'success')
       setStudents(prev => [r.student, ...prev])
       setName('')
       setCourse('')
@@ -171,7 +171,7 @@ export function AdminPanel() {
       if (!res.ok || !r.ok) {
         throw new Error(r?.error || 'Fehler beim Aktualisieren')
       }
-      pushToast('✓ Schüler erfolgreich aktualisiert', 'success')
+      pushToast('Schüler erfolgreich aktualisiert', 'success')
       cancelEdit()
       refreshStudents()
     } catch (e: any) {
@@ -190,7 +190,7 @@ export function AdminPanel() {
       if (!res.ok || !r.ok) {
         throw new Error(r?.error || 'Fehler beim Löschen')
       }
-      pushToast('✓ Schüler erfolgreich gelöscht', 'success')
+      pushToast('Schüler erfolgreich gelöscht', 'success')
       if (editId === id) cancelEdit()
       refreshStudents()
     } catch (e: any) {

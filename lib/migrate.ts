@@ -41,4 +41,9 @@ export async function runMigrations() {
   // Ensure new columns exist on older deployments
   await sql`ALTER TABLE progress ADD COLUMN IF NOT EXISTS payload text;`
   await sql`ALTER TABLE students ADD COLUMN IF NOT EXISTS course text;`
+
+  // Prevent duplicate students with same normalized name + course
+  await sql`CREATE UNIQUE INDEX IF NOT EXISTS students_unique_name_course
+    ON students (lower(display_name), coalesce(course, ''));
+  `
 }
