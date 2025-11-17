@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { getRules, levelFromTotalXP } from '@/lib/xp/services/rules'
+import { xpLevelTitle } from '@/lib/xp/level-titles'
 
 type Props = { studentId: string; robotKey: string; className?: string }
 
@@ -85,12 +86,12 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
 
   if (!studentId || level == null) return null
   return (
-    <div className={`relative flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs text-neutral-200 ${className}`}>
-      <span className="font-semibold">Lv {level}</span>
+    <div className={`relative flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/60 px-3 py-1 text-xs text-neutral-200 ${className}`} title="Dein XP-Rang und Fortschritt">
+      <span className="font-semibold">{xpLevelTitle(level)} <span className="text-neutral-400 font-normal">(L{level})</span></span>
       <span className="text-neutral-400">•</span>
       <span>{xpInLevel}{nextLevelXP ? `/${nextLevelXP}` : ''} XP</span>
       {robotTier > 0 && (
-        <span className="ml-1 rounded bg-brand-950/30 text-brand-200 border border-brand-700/30 px-2 py-0.5">T{robotTier}</span>
+        <span className="ml-1 rounded bg-brand-950/30 text-brand-200 border border-brand-700/30 px-2 py-0.5" title="Meisterschafts-Stufe für diesen Roboter">Meisterstufe {robotTier}</span>
       )}
       {/* XP gain floaters */}
       <div className="pointer-events-none absolute inset-0 overflow-visible">
