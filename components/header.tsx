@@ -48,6 +48,10 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
         </div>
       </div>
       {isPending ? <div className="h-1 bg-brand-500 animate-pulse" /> : null}
+      {/* Secondary header slot for page-specific tabs/controls */}
+      <div id="header-secondary" className="border-t border-neutral-800/80">
+        {/* Content is injected via portal by pages that need it (e.g., AdminPanel) */}
+      </div>
     </header>
   )
 }

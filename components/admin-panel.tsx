@@ -437,23 +437,13 @@ export function AdminPanel() {
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="sticky top-14 z-10 bg-neutral-950/80 backdrop-blur border-b border-neutral-800">
-        <div className="flex gap-2 p-2">
-          <button
-            className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'levels' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
-            onClick={() => scrollToRef(levelRef)}
-          >Level-Verwaltung</button>
-          <button
-            className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'students' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
-            onClick={() => scrollToRef(studentsRef)}
-          >Schüler-Verwaltung</button>
-          <button
-            className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'setup' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
-            onClick={() => scrollToRef(setupRef)}
-          >Setup</button>
-        </div>
-      </div>
+      {/* Tabs werden via Portal in den Header (header-secondary) injiziert */}
+      <HeaderTabsPortal
+        activeTab={activeTab}
+        onLevels={() => scrollToRef(levelRef)}
+        onStudents={() => scrollToRef(studentsRef)}
+        onSetup={() => scrollToRef(setupRef)}
+      />
 
       {/* Level-Verwaltung */}
       <div ref={levelRef} className="card p-4">
@@ -699,4 +689,33 @@ export function AdminPanel() {
       <ToastStack toasts={toasts} onDismiss={dismissToast} />
     </div>
   )
+}
+
+// Portiert die Admin-Tabs in den Header-Sekundärbereich
+function HeaderTabsPortal({ activeTab, onLevels, onStudents, onSetup }: { activeTab: 'levels'|'students'|'setup'; onLevels: () => void; onStudents: () => void; onSetup: () => void }) {
+  const [target, setTarget] = useState<HTMLElement | null>(null)
+  useEffect(() => {
+    setTarget(document.getElementById('header-secondary'))
+    return () => setTarget(null)
+  }, [])
+  if (!target) return null
+  return (require('react-dom').createPortal(
+    <div className="mx-auto max-w-5xl">
+      <div className="flex gap-2 p-2">
+        <button
+          className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'levels' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
+          onClick={onLevels}
+        >Level-Verwaltung</button>
+        <button
+          className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'students' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
+          onClick={onStudents}
+        >Schüler-Verwaltung</button>
+        <button
+          className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'setup' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
+          onClick={onSetup}
+        >Setup</button>
+      </div>
+    </div>,
+    target
+  ))
 }
