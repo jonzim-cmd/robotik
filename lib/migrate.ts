@@ -7,6 +7,11 @@ if (!process.env.POSTGRES_URL && _url) {
 }
 
 export async function runMigrations() {
+  // Give a clear, consistent error if no DB is configured so API routes can surface it
+  const url = process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_URL_NON_POOLING
+  if (!url) {
+    throw new Error('No database configured')
+  }
   await sql`CREATE TABLE IF NOT EXISTS students (
     id text PRIMARY KEY,
     display_name text NOT NULL,
