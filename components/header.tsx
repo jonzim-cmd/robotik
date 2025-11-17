@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { SearchableSelect } from './searchable-select'
 
 type Robot = { key: string; name: string }
-type Student = { id: string; displayName: string }
+type Student = { id: string; displayName: string; course?: string }
 
 export function Header({ robots, students, selectedRobot, selectedStudent }: { robots: Robot[]; students: Student[]; selectedRobot: string; selectedStudent: string }) {
   const router = useRouter()
@@ -17,7 +17,7 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
     })
   }
 
-  const studentOptions = useMemo(() => students.map(s => ({ value: s.id, label: s.displayName })), [students])
+  const studentOptions = useMemo(() => students.map(s => ({ value: s.id, label: s.course ? `${s.displayName} (Kurs: ${s.course})` : s.displayName })), [students])
 
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">

@@ -3,6 +3,7 @@ import { pgTable, text, timestamp, primaryKey, boolean } from 'drizzle-orm/pg-co
 export const StudentsTable = pgTable('students', {
   id: text('id').primaryKey(),
   displayName: text('display_name').notNull(),
+  course: text('course'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 

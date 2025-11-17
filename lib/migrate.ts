@@ -16,6 +16,7 @@ export async function runMigrations() {
   await sql`CREATE TABLE IF NOT EXISTS students (
     id text PRIMARY KEY,
     display_name text NOT NULL,
+    course text,
     created_at timestamp DEFAULT now() NOT NULL
   );`
 
@@ -39,4 +40,5 @@ export async function runMigrations() {
 
   // Ensure new columns exist on older deployments
   await sql`ALTER TABLE progress ADD COLUMN IF NOT EXISTS payload text;`
+  await sql`ALTER TABLE students ADD COLUMN IF NOT EXISTS course text;`
 }

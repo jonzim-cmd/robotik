@@ -13,13 +13,14 @@ export async function PATCH(req: NextRequest, context: { params: { id: string } 
     const id = context.params.id
     const body = await req.json()
     const name = (body.displayName || '').toString().trim()
+    const course = (body.course || '').toString().trim()
     if (!name) {
       return NextResponse.json({ ok: false, error: 'Name fehlt' }, { status: 400 })
     }
     const db = await getDb()
     await db
       .update(StudentsTable)
-      .set({ displayName: name })
+      .set({ displayName: name, course: course || undefined })
       .where(eq(StudentsTable.id, id))
 
     return NextResponse.json({ ok: true })

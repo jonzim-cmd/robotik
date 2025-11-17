@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-type Student = { id: string; displayName: string }
+type Student = { id: string; displayName: string; course?: string }
 type Robot = { key: string; name: string }
 type Level = { key: string; title: string; num?: number }
 
@@ -17,15 +17,23 @@ export function AdminPanel() {
   
   const [students, setStudents] = useState<Student[]>([])
   const [name, setName] = useState('')
+  const [course, setCourse] = useState('')
   const [info, setInfo] = useState('')
   const [studentInfo, setStudentInfo] = useState('')
   const [setupInfo, setSetupInfo] = useState('')
   const [editId, setEditId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
+  const [editCourse, setEditCourse] = useState('')
   const [studentBusyId, setStudentBusyId] = useState<string | null>(null)
   const [studentQuery, setStudentQuery] = useState('')
   const [showAllStudents, setShowAllStudents] = useState(false)
-  const filteredStudents = students.filter(s => s.displayName.toLowerCase().includes(studentQuery.toLowerCase()))
+  const filteredStudents = students.filter(s => {
+    const q = studentQuery.toLowerCase()
+    return (
+      s.displayName.toLowerCase().includes(q) ||
+      (s.course || '').toLowerCase().includes(q)
+    )
+  })
   const visibleStudents = (studentQuery ? filteredStudents : (showAllStudents ? filteredStudents : filteredStudents.slice(0, 3)))
   
   const [selectedRobot, setSelectedRobot] = useState('rvr_plus')
@@ -109,13 +117,14 @@ export function AdminPanel() {
       const res = await fetch('/api/admin/students', {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ displayName: newName })
+        body: JSON.stringify({ displayName: newName, course })
       })
       const r = await res.json()
       if (!res.ok || !r.ok) throw new Error(r?.error || 'Fehler')
       setStudentInfo('✓ Schüler erfolgreich angelegt')
       setStudents(prev => [r.student, ...prev])
       setName('')
+      setCourse('')
     } catch (e: any) {
       setStudentInfo(`❌ ${e?.message || 'Fehler'}`)
     } finally {
@@ -127,11 +136,13 @@ export function AdminPanel() {
   function startEdit(student: Student) {
     setEditId(student.id)
     setEditName(student.displayName)
+    setEditCourse(student.course || '')
   }
 
   function cancelEdit() {
     setEditId(null)
     setEditName('')
+    setEditCourse('')
   }
 
   async function saveEdit() {
@@ -147,7 +158,7 @@ export function AdminPanel() {
       const res = await fetch(`/api/admin/students/${editId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ displayName: newName })
+        body: JSON.stringify({ displayName: newName, course: editCourse })
       })
       const r = await res.json().catch(() => ({} as any))
       if (!res.ok || !r.ok) {
@@ -466,6 +477,13 @@ export function AdminPanel() {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && addStudent()}
           />
+          <input
+            className="input flex-1"
+            placeholder="Kurs / Lehrkraft (optional)"
+            value={course}
+            onChange={(e) => setCourse(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addStudent()}
+          />
           <button className="btn" onClick={addStudent} disabled={studentBusyId === '__add__'}>
             {studentBusyId === '__add__' ? 'Speichere…' : 'Anlegen'}
           </button>
@@ -497,18 +515,35 @@ export function AdminPanel() {
             <li key={s.id} className="flex items-center justify-between rounded-md border border-neutral-800 bg-neutral-900/60 p-2 gap-2">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 {editId === s.id ? (
-                  <input
-                    className="input flex-1"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') saveEdit()
-                      if (e.key === 'Escape') cancelEdit()
-                    }}
-                    autoFocus
-                  />
+                  <div className="flex flex-1 gap-2">
+                    <input
+                      className="input flex-1"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit()
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
+                      autoFocus
+                    />
+                    <input
+                      className="input flex-1"
+                      placeholder="Kurs / Lehrkraft (optional)"
+                      value={editCourse}
+                      onChange={(e) => setEditCourse(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit()
+                        if (e.key === 'Escape') cancelEdit()
+                      }}
+                    />
+                  </div>
                 ) : (
-                  <span className="truncate">{s.displayName}</span>
+                  <div className="truncate">
+                    <span>{s.displayName}</span>
+                    {s.course ? (
+                      <span className="ml-2 text-xs text-neutral-400">(Kurs: {s.course})</span>
+                    ) : null}
+                  </div>
                 )}
                 <span className="text-xs text-neutral-500 shrink-0">{s.id}</span>
               </div>
