@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db'
 import { ProgressTable } from '@/lib/schema'
 import { and, eq } from 'drizzle-orm'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   const robot = req.nextUrl.searchParams.get('robot') || ''
   const student = req.nextUrl.searchParams.get('student') || ''

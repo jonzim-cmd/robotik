@@ -121,3 +121,25 @@ button:not(:disabled) {
 button:disabled {
   @apply cursor-not-allowed opacity-50;
 }
+
+/* Collapsible Details/Summary */
+details summary::-webkit-details-marker,
+details summary::marker {
+  display: none !important;
+}
+
+/* Arrow rotation */
+details[open] summary .details-marker {
+  transform: rotate(90deg);
+}
+
+details[open] {
+  @apply bg-neutral-900/60 border-brand-600/30;
+}
+
+/* Content area styling */
+details > *:not(summary) {
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid theme('colors.neutral.700 / 0.5');
+}

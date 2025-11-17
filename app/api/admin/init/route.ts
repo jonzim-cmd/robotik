@@ -1,5 +1,7 @@
 import { runMigrations } from '@/lib/migrate'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST() {
   try {
     await runMigrations()

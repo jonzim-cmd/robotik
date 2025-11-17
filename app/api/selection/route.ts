@@ -1,5 +1,7 @@
 import { cookies } from 'next/headers'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: Request) {
   const { type, value } = await req.json()
   const cookieStore = cookies()

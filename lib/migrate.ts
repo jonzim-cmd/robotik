@@ -23,6 +23,14 @@ export async function runMigrations() {
     PRIMARY KEY (student_id, robot_key, item_key)
   );`
 
+  await sql`CREATE TABLE IF NOT EXISTS level_locks (
+    robot_key text NOT NULL,
+    level_key text NOT NULL,
+    unlocked boolean NOT NULL DEFAULT false,
+    updated_at timestamp DEFAULT now() NOT NULL,
+    PRIMARY KEY (robot_key, level_key)
+  );`
+
   // Ensure new columns exist on older deployments
   await sql`ALTER TABLE progress ADD COLUMN IF NOT EXISTS payload text;`
 }

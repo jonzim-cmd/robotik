@@ -3,6 +3,8 @@ import { StudentsTable } from '@/lib/schema'
 import { NextRequest } from 'next/server'
 import { randomId } from '@/lib/id'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const db = await getDb()

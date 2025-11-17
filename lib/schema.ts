@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, primaryKey } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, primaryKey, boolean } from 'drizzle-orm/pg-core'
 
 export const StudentsTable = pgTable('students', {
   id: text('id').primaryKey(),
@@ -18,5 +18,18 @@ export const ProgressTable = pgTable(
   },
   (t) => ({
     pk: primaryKey({ columns: [t.studentId, t.robotKey, t.itemKey] }),
+  })
+)
+
+export const LevelLocksTable = pgTable(
+  'level_locks',
+  {
+    robotKey: text('robot_key').notNull(),
+    levelKey: text('level_key').notNull(),
+    unlocked: boolean('unlocked').notNull().default(false),
+    updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.robotKey, t.levelKey] }),
   })
 )

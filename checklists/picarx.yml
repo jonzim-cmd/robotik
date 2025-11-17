@@ -64,8 +64,11 @@ levels:
              - Oder: Nutze **Gesichtserkennung** (falls verfügbar)
           
           **Dokumentation:**
+          
           - Welche **Farbe/Objekt** hast du erkannt?
           - Wie **genau** war die Erkennung?
           - **Screenshot** oder Beschreibung des Ergebnisses
+          
+          ---
           
           💡 **Kamera = Augen des Roboters** – sehr wichtig für autonome Navigation!

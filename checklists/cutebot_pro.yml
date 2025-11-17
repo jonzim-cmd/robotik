@@ -60,9 +60,12 @@ levels:
           ```
           
           **Bonus-Ideen:**
+          
           - 🌈 **Regenbogen-Animation:** Alle Farben durchlaufen
           - 🚨 **Polizei-Licht:** Abwechselnd Rot/Blau blinken
           - 💫 **Zufallsfarben:** LEDs mit Random-Werten
+          
+          ---
           
           💡 **LEDs zeigen den Status des Roboters!**
   
@@ -102,10 +105,13 @@ levels:
           ```
           
           **Feintuning:**
+          
           - Teste verschiedene **Geschwindigkeiten** (30, 50, 70)
           - Langsamer = genauer, aber langsam
           - Schneller = cool, aber schwerer zu steuern
           - Finde die **optimale Balance**!
+          
+          ---
           
           🏁 **Ziel:** Cutebot folgt der Linie automatisch, auch bei Kurven!
       
@@ -139,11 +145,14 @@ levels:
           - Er sollte **nicht** gegen Wände fahren!
           
           **Erweiterte Ideen:**
+          
           - 📏 **Abstandswarnung:** LED-Farbe je nach Distanz
             - Weit (>30cm) → Grün
             - Mittel (15-30cm) → Gelb  
             - Nah (<15cm) → Rot + Stopp
           - 🎯 **Zielverfolgung:** Bewege Hand vor Sensor, Roboter folgt
           - 🚧 **Intelligente Navigation:** Mehrfach ausweichen
+          
+          ---
           
           ⚠️ **Sicherheits-Feature:** Roboter schützt sich selbst!

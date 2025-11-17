@@ -46,9 +46,12 @@ levels:
           **Erstelle ein einfaches Testprogramm:**
           
           *Beispiele:*
+          
           - LEDs in eine Farbe ändern (z.B. Rot oder Grün)
           - Kurze Vorwärtsbewegung (1-2 Sekunden)
           - LED blinken lassen
+          
+          ---
           
           **Tipp:** Starte mit etwas Einfachem – Hauptsache es funktioniert!
         noteLabel: "**Beschreibe deine erste Aktion:** Was hast du programmiert?"
@@ -72,6 +75,8 @@ levels:
           - Für eine **festgelegte Zeit** → z.B. **2 Sekunden**
           - Dann **automatisch stoppen**
           
+          ---
+          
           _Nutze den „Roll"-Block und stelle alle Werte ein._
       
       - key: vor_und_zurueck
@@ -92,10 +97,13 @@ levels:
           **Erstelle eine Figur mit mehreren Roll-Blöcken:**
           
           *Ideen für Formen:*
+          
           - **L-Form:** Vorwärts → Drehen 90° → Vorwärts
-          - **Quadrat:** Siehe nächstes Level (mit Schleife einfacher!)
+          - **Quadrat:** Vorwärts → Drehen 90° → Vorwärts usw.
           - **S-Kurve:** Vorwärts → Links → Rechts → Vorwärts
           - **Kreis:** Konstante Drehung während der Fahrt
+          
+          ---
           
           **Tipp:** Experimentiere mit verschiedenen Headings (0°, 90°, 180°, 270°)
         noteLabel: "**Deine Bewegungs-Idee:** Welche Form/Strecke hast du programmiert?"
@@ -106,7 +114,19 @@ levels:
     intro: |
       **Ziel:** Wiederholungen nutzen statt Copy-Paste!
       
-      Schleifen machen deinen Code **kürzer**, **übersichtlicher** und **professioneller**.
+      **Was sind Schleifen?**
+      
+      Schleifen sind ein wichtiges Programmier-Konzept: Sie wiederholen automatisch eine Abfolge von Befehlen, ohne dass du sie immer wieder kopieren musst.
+      
+      **Beispiel:**
+      - ❌ **Ohne Schleife:** Du kopierst 4× die gleichen Blöcke → viel Arbeit!
+      - ✅ **Mit Schleife:** Du schreibst es 1× und sagst "wiederhole 4-mal" → fertig!
+      
+      **Warum sind Schleifen gut?**
+      - 📉 **Kürzer** – weniger Blöcke im Programm
+      - 👀 **Übersichtlicher** – leichter zu verstehen
+      - ✏️ **Einfacher zu ändern** – nur an einer Stelle anpassen
+      - 🎓 **Professioneller** – so programmieren echte Entwickler!
     items:
       - key: quadrat_mit_schleife
         label: Quadrat mit Schleife fahren
@@ -116,15 +136,17 @@ levels:
           ❌ **Nicht so:** 4× die gleichen Blöcke kopieren  
           ✓ **Sondern so:** Eine Schleife nutzen!
           
-          **So geht's:**
-          1. Programmiere **eine Seite des Quadrats:**
-             - Fahre geradeaus (z.B. 1 Sekunde)
-             - Drehe 90° nach rechts
-          2. Packe diese beiden Schritte in **„wiederhole 4-mal"**
-          3. Starte das Programm
-          4. Fertig – der RVR+ fährt ein perfektes Quadrat! ▢
-          
-          💡 **Warum funktioniert das?** 4 Seiten × 90° Drehung = 360° = Vollständiger Kreis zurück zum Start!
+          > 💡 **Schritt-für-Schritt Anleitung:**
+          >
+          > 1. Programmiere **eine Seite des Quadrats:**
+          >    - Fahre geradeaus (z.B. 1 Sekunde)
+          >    - Drehe 90° nach rechts
+          > 2. Packe diese beiden Schritte in **„wiederhole 4-mal"**
+          > 3. Starte das Programm
+          > 4. Fertig – der RVR+ fährt ein perfektes Quadrat! ▢
+          >
+          > **Warum funktioniert das?**  
+          > 4 Seiten × 90° Drehung = 360° = Vollständiger Kreis zurück zum Start!
       
       - key: dauerpatrouille
         label: Endlos-Patrouille programmieren
@@ -135,30 +157,75 @@ levels:
           - Der RVR+ wiederholt die Bewegung **unendlich oft**
           - Perfekt für: Kreise, Patrouillen, Überwachungs-Routen
           
+          ---
+          
           *Beispiel-Ideen:*
+          
           - Im Kreis fahren (dauerhaft)
           - Hin und her pendeln
           - Achter-Form wiederholen
           
+          ---
+          
           ⚠️ **Stopp:** Nur durch manuelles Beenden des Programms!
       
+      - key: dreieck
+        label: Dreieck mit Schleife ▲
+        description: |
+          Programmiere ein **Dreieck** mit `wiederhole 3-mal`
+          
+          > 💡 **Tipp:** Winkel = 360° ÷ Anzahl Ecken  
+          > Für ein Dreieck: 360° ÷ 3 = **120°**
+      
+      - key: sechseck
+        label: Sechseck mit Schleife ⬡
+        description: |
+          Programmiere ein **Sechseck** mit `wiederhole 6-mal`
+          
+          > 💡 **Tipp:** Winkel = 360° ÷ Anzahl Ecken  
+          > Für ein Sechseck: 360° ÷ 6 = **60°**
+      
+      - key: achteck
+        label: Achteck mit Schleife ⬢
+        description: |
+          Programmiere ein **Achteck** mit `wiederhole 8-mal`
+          
+          > 💡 **Tipp:** Winkel = 360° ÷ Anzahl Ecken  
+          > Für ein Achteck: 360° ÷ 8 = **45°**
+      
+      - key: spirale
+        label: Spirale programmieren 🌀
+        description: |
+          Programmiere eine **Spirale** - der RVR+ fährt in immer größer werdenden Kreisen!
+          
+          > 💡 **Tipp:** Nutze eine Variable oder erhöhe die Geschwindigkeit/Strecke in jeder Runde!
+          >
+          > **Beispiel-Ansätze:**
+          > - Starte mit kurzer Strecke → Nach jeder Drehung länger fahren
+          > - Erhöhe die Geschwindigkeit schrittweise
+          >
+          > ⚠️ Das ist schwieriger als die anderen Figuren!
+      
       - key: eigene_figur
-        label: Kreative Figur mit Schleife
+        label: Eigene Figur erfinden 🎨
         description: |
           **Jetzt bist du dran – sei kreativ!**
           
-          Programmiere eine eigene Figur mit Schleife:
+          Erfinde und programmiere eine **eigene Figur** mit Schleife!
           
-          - **Dreieck:** Fahre eine Seite + drehe 120° → `wiederhole 3-mal`
-          - **Sechseck:** Fahre eine Seite + drehe 60° → `wiederhole 6-mal`
-          - **Achteck:** Fahre eine Seite + drehe 45° → `wiederhole 8-mal`
-          - **Zickzack:** Vorwärts-links-vorwärts-rechts → Wiederholung
-          - **Spirale:** Geschwindigkeit erhöhen bei jeder Runde
+          ---
           
-          🎯 **Herausforderung:** Nutze eine Schleife, nicht nur einzelne Blöcke!
+          *Ideen:*
+          - Stern (5-zackig)
+          - Zickzack-Linie
+          - Blume (mehrere Kreise)
+          - Spirale mit Ecken
+          - Deine eigene Idee!
           
-          💡 **Tipp:** Winkel = 360° ÷ Anzahl Ecken (z.B. Dreieck: 360° ÷ 3 = 120°)
-        noteLabel: "**Deine Figur:** Beschreibe, was du programmiert hast (inkl. Schleifentyp)"
+          ---
+          
+          🎯 **Herausforderung:** Nutze mindestens eine Schleife!
+        noteLabel: "**Deine Figur:** Welche Figur hast du programmiert? Wie funktioniert sie?"
 
   - key: leds
     num: 3
@@ -188,13 +255,19 @@ levels:
           **LEDs zeigen an, was der RVR+ gerade tut:**
           
           **Beispiel-Logik:**
+          
           - RVR+ fährt **geradeaus** → LEDs **blau** 🔵
           - RVR+ **dreht** → LEDs **orange** 🟠
           - RVR+ **stoppt** → LEDs **rot** 🔴
           
+          ---
+          
           **Umsetzung:**
+          
           - Setze vor jeder Bewegung die passende LED-Farbe
           - Kombiniere LED-Blöcke mit Roll-Blöcken
+          
+          ---
           
           ✨ **Effekt:** Man sieht sofort, was der Roboter vorhat!
       
@@ -206,11 +279,14 @@ levels:
           Überlege dir, was welche Farbe bedeutet:
           
           *Klassische Systeme:*
-          - 🔴 **Rot** = Gefahr, Stopp, Fehler
-          - 🟢 **Grün** = Alles OK, Bereit, Fertig
-          - 🔵 **Blau** = Aktiv, Fahren, Normal
-          - 🟡 **Gelb** = Warnung, Vorsicht
-          - 🟣 **Lila** = Spezialmodus, Sensor aktiv
+          
+          - 🔴 **Rot** = ?
+          - 🟢 **Grün** = ?
+          - 🔵 **Blau** = ?
+          - 🟡 **Gelb** = ?
+          - 🟣 **Lila** = ?
+          
+          ---
           
           **Dann:** Setze dieses System in deinem Programm konsequent um!
         noteLabel: "**Dein Farbsystem:** Welche Farbe bedeutet was? (Liste alle Farben auf)"
@@ -232,13 +308,19 @@ levels:
           **LED zeigt die erkannte Farbe an:**
           
           **Setup:**
+          
           - Lege verschieden farbige Papiere auf den Boden
           - z.B. Rot, Grün, Blau, Gelb
           
+          ---
+          
           **Programm:**
+          
           1. RVR+ liest die Farbe unter sich aus (Farbsensor-Block)
           2. LEDs leuchten in der **gleichen Farbe**
           3. Test: Bewege den RVR+ über verschiedene Papiere
+          
+          ---
           
           ✓ **Erfolg:** Die LED-Farbe ändert sich passend zum Untergrund!
       
@@ -250,11 +332,14 @@ levels:
           **Idee:** RVR+ verhält sich unterschiedlich bei Licht/Dunkelheit
           
           **Beispiel-Programme:**
+          
           - 🌞 **Bei Helligkeit:** LEDs leuchten hell (Weiß/Gelb)
           - 🌙 **Bei Dunkelheit:** LEDs dunkel (Blau/Aus) oder Roboter stoppt
           - 💡 **Mittlerer Wert:** Orange/Warnung
           
-          **Test:** Halte deine Hand über den Sensor → Reaktion!
+          ---
+          
+          **Test:** Halte deine Hand über den Sensor oder dunkle eine Bereich im Raum ab → Reaktion!
       
       - key: neigung_reaktion
         label: Neigung & Bewegung erkennen
@@ -263,29 +348,73 @@ levels:
           
           **Nutze den IMU-Sensor (Pitch/Roll/Beschleunigung):**
           
+          ---
+                    
           *Programmier-Ideen:*
+          
           - **Anheben:** RVR+ erkennt, wenn du ihn hochhebst → LEDs rot
           - **Kippen:** Bei schräger Fahrbahn → Warnung
           - **Rütteln:** Bei starker Beschleunigung → Alarm-Modus
           - **Umdrehen:** Roboter auf dem Rücken → SOS-Signal
           
+          ---
+          
           🎯 **Ziel:** Der RVR+ reagiert auf physische Veränderungen!
       
       - key: eigener_sensor_versuch
-        label: Eigenes Sensor-Experiment
+        label: Sensor-Patrouille programmieren
         description: |
-          **Jetzt kreativ werden!**
+          **Aufgabe: Kombiniere Bewegung, Schleifen, LEDs und Sensoren!**
           
-          Baue ein eigenes Sensor-Projekt:
+          Programmiere eine **Sensor-Patrouille**: Der RVR+ fährt eine Strecke und zeigt dabei kontinuierlich Sensorwerte über LED-Farben an.
           
-          *Inspiration:*
-          - 🚨 **Alarm-System:** Lichtsensor + LED-Warnung
-          - 🎨 **Farb-DJ:** Farbsensor steuert LED-Show
-          - ⚖️ **Balance-Bot:** Neigungssensor + Ausgleichsbewegung
-          - 🌓 **Tag/Nacht-Modus:** Lichtsensor ändert Verhalten komplett
+          ---
           
-          **Tipp:** Kombiniere mehrere Sensoren für komplexere Effekte!
-        noteLabel: "**Dein Experiment:** Welcher Sensor? Was macht dein Programm?"
+          **Dein Programm soll:**
+          
+          1. **Bewegung (Schleife):**
+             - RVR+ fährt in einer Endlosschleife (z.B. Quadrat, Kreis oder hin und her)
+          
+          2. **Sensor auslesen:**
+             - Wähle **einen oder zwei Sensoren** (Farbe, Licht, Neigung)
+             - Lese den Sensorwert in der Schleife kontinuierlich aus
+          
+          3. **LED-Anzeige:**
+             - Zeige den Sensorwert über **LED-Farben** an
+             - Nutze verschiedene Farben für verschiedene Werte
+          
+          ---
+          
+          **💡 Beispiel-Projekte zur Inspiration:**
+          
+          > **Projekt 1: Untergrund-Scout** 🎨
+          >
+          > - Fährt im Quadrat (Schleife)
+          > - Liest **Farbsensor** aus
+          > - LEDs zeigen die erkannte Bodenfarbe an
+          > - _Effekt: Man sieht auf welchem Untergrund der RVR+ gerade fährt_
+          
+          > **Projekt 2: Licht-Monitor** 💡
+          >
+          > - Fährt eine Patrouille (Endlosschleife)
+          > - Liest **Lichtsensor** aus
+          > - LEDs: Hell → Weiß/Gelb | Dunkel → Blau/Lila
+          > - _Effekt: Der RVR+ zeigt die Helligkeit seiner Umgebung_
+          
+          > **Projekt 3: Terrain-Anzeige** ⚖️
+          >
+          > - Fährt geradeaus (Schleife)
+          > - Liest **Neigungssensor** aus (Pitch/Roll)
+          > - LEDs: Gerade → Grün | Schräg → Orange | Stark geneigt → Rot
+          > - _Effekt: Man sieht ob der Untergrund eben oder schräg ist_
+          
+          > **Projekt 4: Multi-Sensor-Dashboard** 🚀
+          >
+          > - Kombiniere **2 Sensoren** (z.B. Farbe + Licht)
+          > - Vorne LEDs = Farbsensor | Hinten LEDs = Lichtsensor
+          > - _Effekt: Komplettes Sensor-Display auf Rädern!_
+          
+        noteLabel: "**Dein Sensor-Patrouille Projekt:**\n\n1. Welche Bewegung/Strecke?\n2. Welche(r) Sensor(en)?\n3. Wie zeigen die LEDs die Werte an?"
 
   - key: bedingungen
     num: 5
@@ -293,7 +422,37 @@ levels:
     intro: |
       **Ziel:** RVR+ trifft eigene Entscheidungen!
       
-      Mit **If-Blöcken** `wenn ... dann ... sonst` wird der Roboter intelligent.
+      **Was sind Bedingungen (Wenn-Dann)?**
+      
+      Bedingungen ermöglichen es deinem Roboter, **intelligent auf seine Umgebung zu reagieren**! Statt immer das gleiche zu tun, kann der RVR+ jetzt **Entscheidungen treffen**.
+      
+      **Das Grundprinzip:**
+      
+      - **WENN** [etwas zutrifft]
+      - **DANN** [tue das]
+      - **SONST** [tue etwas anderes]
+      
+      **Beispiel aus dem echten Leben:**
+      - 🚦 **WENN** die Ampel rot ist → **DANN** stoppe
+      - 🌧️ **WENN** es regnet → **DANN** nimm einen Regenschirm
+      - 🔋 **WENN** Akku < 20% → **DANN** lade auf
+      
+      **Warum sind Bedingungen wichtig?**
+      
+      - 🤖 **Autonomie** – Der Roboter reagiert selbstständig auf Situationen
+      - 🧠 **Intelligenz** – Verschiedene Aktionen je nach Zustand
+      - 🛡️ **Sicherheit** – Reagiert auf Gefahren (z.B. Neigung, Hindernisse)
+      - 🎮 **Interaktivität** – Macht den Roboter spannender!
+      
+      **Wofür nutzt man Bedingungen beim RVR+?**
+      
+      - **Farberkennung:** Rotes Papier = Stopp, Grünes Papier = Los!
+      - **Licht-Steuerung:** Bei Dunkelheit langsamer fahren
+      - **Sicherheit:** Bei zu starker Neigung automatisch stoppen
+      - **Navigation:** Unterschiedliche Fahrwege je nach Sensor-Wert
+      - **Modi:** Verschiedenes Verhalten in verschiedenen Situationen
+      
+      Mit **If-Blöcken** `wenn ... dann ... sonst` wird der Roboter wirklich intelligent!
     items:
       - key: farbe_stopp
         label: Farbe als Stopp-Signal
@@ -344,13 +503,16 @@ levels:
           Wenn Neigung > 20° ODER Beschleunigung > Schwellwert
             → STOPP!
             → LEDs: ROT (Alarm)
-            → (optional) Langsame Rückwärtsfahrt
+            → Langsame Rückwärtsfahrt
           ```
           
           **Anwendung:**
+          
           - Schutz vor Absturz an Tischkante
           - Erkennung von Kollisionen
           - Kippsicherung bei unebenen Flächen
+          
+          ---
           
           ⚠️ **Sicherheits-Feature für autonome Roboter!**
       
@@ -371,120 +533,357 @@ levels:
           ```
           
           *Weitere Ideen:*
+          
           - **Lichtsensor:** Hell → Vorwärts | Dunkel → Rückwärts
           - **Farbsensor:** Rot → Stop | Grün → Vollgas
           - **Zeit:** Erste 5 Sek → Langsam | Danach → Schnell
           
+          ---
+          
           🎯 **Das macht deinen Roboter adaptiv!**
         noteLabel: "**Deine Wenn-Dann-Logik:** Was ist deine Bedingung und was passiert?"
+      
+      - key: intelligenter_parcours
+        label: "🚀 Projekt: Intelligenter Parcours-Roboter"
+        description: |
+          **Aufgabe: Kombiniere Bewegung, Schleifen, LEDs, Sensoren und Bedingungen!**
+          
+          Programmiere einen **intelligenten Parcours-Roboter**: Erstelle einen Parcours mit verschiedenen **farbigen Zonen** (nutze farbige Papiere oder Klebeband) und der RVR+ reagiert **intelligent auf jede Farbe**!
+          
+          ---
+          
+          **Dein Programm soll:**
+          
+          1. **Bewegung in Schleife:**
+             - RVR+ fährt kontinuierlich in einer Patrouille (z.B. Quadrat, Kreis oder geradeaus mit Umkehr)
+             - Nutze eine Schleife für die Bewegung
+          
+          2. **Farbsensor-Erkennung:**
+             - Lese den Farbsensor kontinuierlich aus
+             - Mindestens **3 verschiedene Farben** sollen erkannt werden
+          
+          3. **Bedingte Reaktionen:**
+             - Jede Farbe löst eine **andere Aktion** aus
+             - Nutze `Wenn ... dann ... sonst wenn ... sonst` Blöcke
+          
+          4. **LED-Feedback:**
+             - LEDs zeigen den aktuellen Zustand/Modus an
+             - Verschiedene Farben für verschiedene Aktionen
+          
+          ---
+          
+          **💡 Beispiel-Projekt: "Verkehrsregelroboter"**
+          
+          > **Parcours-Setup:**
+          >
+          > - 🔴 **Rote Zone** = Stoppschild
+          > - 🟢 **Grüne Zone** = Schnellstraße
+          > - 🔵 **Blaue Zone** = Langsam-Zone
+          > - 🟡 **Gelbe Zone** = Kreuzung (90° drehen)
+          
+          > **Programm-Ablauf:**
+          >
+          > - **Beim Start:** LEDs Weiß (Bereit)
+          > - **Wiederhole fortlaufend:** Lese Farbsensor
+          > - **WENN Farbe = ROT** → Stoppe 2 Sek, LEDs Rot, dann weiterfahren
+          > - **SONST WENN Farbe = GRÜN** → Fahre Geschwindigkeit 80, LEDs Grün
+          > - **SONST WENN Farbe = BLAU** → Fahre Geschwindigkeit 30, LEDs Blau
+          > - **SONST WENN Farbe = GELB** → Drehe 90° rechts, LEDs Gelb
+          > - **SONST** → Fahre normal (50), LEDs Weiß
+          
+          > **⭐ Bonus-Ideen:**
+          >
+          > - 🔦 Lichtsensor: Bei Dunkelheit alle Geschwindigkeiten halbieren
+          > - ⚖️ Sicherheit: Bei Neigung sofort stoppen (Tischkante!)
+          > - 🔢 Zähler: Zähle erkannte Farben (Vorbereitung Level 6)
+          > - 📢 Sound: Verschiedene Töne für verschiedene Zonen
+          > - 🎨 Mehr Farben: Orange, Lila mit eigenen Funktionen
+          
+        noteLabel: |
+          **Dokumentiere dein Parcours-Projekt:**
+          
+          1. **Welche Farben hast du genutzt?** (Liste alle Farben auf)
+          2. **Was passiert bei jeder Farbe?** (z.B. "Rot = Stopp für 2 Sek")
+          3. **Welche Bewegung macht der RVR+?** (Quadrat, Kreis, Linie?)
+          4. **Bonus-Features?** (Falls du etwas Extras eingebaut hast)
+          5. **Besondere Herausforderungen?** (Was war schwierig?)
 
   - key: variablen
     num: 6
     title: Eigene Variablen („Gedächtnis")
     intro: |
-      **Ziel:** Der RVR+ kann sich Dinge merken!
+      **Ziel:** Der RVR+ kann sich Dinge merken und zählen!
       
-      **Variablen** = Speicherplätze für Zahlen, Text oder Zustände.  
-      Perfekt für Zähler, Modi, Scores, Geschwindigkeiten, etc.
+      **Was sind Variablen?**
+      
+      Eine **Variable** ist wie eine **Schachtel mit einem Namen**, in die du eine **Zahl** (oder Text) hineinlegen kannst. Der Roboter kann sich diese Zahl merken und später damit arbeiten.
+      
+      **Beispiel aus dem echten Leben:**
+      - 📊 **Punkte-Tafel** beim Sport → merkt sich den aktuellen Spielstand
+      - 🎯 **Strichliste** → zählt wie oft etwas passiert ist
+      - 🏃 **Schrittzähler** → merkt sich die Anzahl deiner Schritte
+      - 📦 **Behälter mit Etikett** → Name auf dem Etikett, Inhalt (Zahl) drin
+      
+      **Wichtig zu verstehen:**
+      
+      ⚠️ Eine Variable **tut von selbst NICHTS**! Sie ist nur ein Speicher.
+      
+      - Wenn du eine Variable `runden` erstellst, **zählt sie nicht automatisch** Runden!           
+      - **Du musst** der Variable sagen:
+        - 📝 Welchen **Startwert** sie hat, z.B. `0`
+        - ➕ **Wann** sie sich erhöhen soll, z.B. nach jeder Runde: `ändere runden um +1` 
+        - 🎯 **Wofür** du sie nutzt, z.B. in einer Bedingung: `Wenn runden > 5 → Stoppe`
+      
+      **Was kannst du mit Variablen machen?**
+      
+      1. **📊 Zählen:** Wie oft ist etwas passiert? (Runden, Farben erkannt, Kollisionen)
+      2. **💾 Speichern:** Aktuellen Zustand merken (Geschwindigkeit, Modus, Punkte)
+      3. **🔄 Dynamisch steuern:** Werte im Programm verwenden (Variable als Geschwindigkeit nutzen)
+      4. **🧠 Entscheidungen treffen:** Basierend auf gespeichertem Wert reagieren (Wenn Punkte > 50 → Gewonnen!)
+      
+      **Wie funktioniert eine Variable? – Schritt für Schritt:**
+      
+      ```
+      1. Variable erstellen (z.B. "runden")
+      2. Startwert setzen (setze runden auf 0)
+      3. Wert ändern (ändere runden um +1) ← DU programmierst, WANN das passiert!
+      4. Wert nutzen (z.B. in Bedingung: wenn runden > 3)
+      ```
+      
+      Mit Variablen machst du deinen RVR+ **intelligent und lernfähig**! 🧠
     items:
-      - key: variable_anlegen
-        label: Eine Variable erstellen
+      - key: runden_zaehler
+        label: "Aufgabe 1: Runden-Zähler bauen"
         description: |
-          **Erstelle deine erste Variable:**
+          **Programmiere einen Zähler, der mitzählt, wie oft der RVR+ eine Runde fährt!**
           
-          1. Gehe zum **Variablen-Bereich** in der Block-Palette
-          2. Klicke auf **„Neue Variable erstellen"**
-          3. Gib einen **sinnvollen Namen** ein
+          **Dein Programm:**
           
-          *Gute Namen:*
-          - `runden` – Zählt durchfahrene Runden
-          - `speed` – Speichert aktuelle Geschwindigkeit
-          - `modus` – 0 = langsam, 1 = schnell, 2 = turbo
-          - `punkte` – Score-System
-          - `kollisionen` – Anzahl erkannter Hindernisse
+          1. Erstelle eine Variable `runden`
+          2. Setze `runden` beim Start auf **0**
+          3. Lass den RVR+ in einer Schleife eine einfache Strecke fahren (z.B. Quadrat oder Kreis)
+          4. **Nach jeder Runde:** Erhöhe `runden` um **+1**
+          5. Lass dir die Variable in der App **anzeigen** (falls möglich) oder zeige sie über LED-Blinken
+          
+          ---
+          
+          **Was du beobachten sollst:**
+          - Die Variable **beginnt bei 0**
+          - Sie **erhöht sich jede Runde um 1**
+          - Nach 5 Runden steht sie bei **5**
+          
+          > 💡 **Wie zeige ich die Variable an?**
+          >
+          > **Methode 1:** In der App anzeigen (Console/Debug-Bereich)
+          >
+          > **Methode 2:** Über LED-Blinken
+          > ```
+          > Nach jeder Runde:
+          >   Blinke LEDs (runden) mal
+          >   → Runde 1: 1× blinken
+          >   → Runde 3: 3× blinken
+          > ```
+        noteLabel: "**Funktioniert dein Zähler?** Beschreibe kurz, was passiert."
       
-      - key: startwert_setzen
-        label: Startwert festlegen
+      - key: stopp_nach_x_runden
+        label: "Aufgabe 2: Stopp nach X Runden"
         description: |
-          **Jede Variable braucht einen Anfangswert:**
+          **Erweitere deinen Runden-Zähler: Der RVR+ soll nach 5 Runden automatisch stoppen!**
           
-          ```
-          Beim Programmstart:
-            Setze runden auf 0
-            Setze speed auf 50
-            Setze modus auf 1
-          ```
+          **Dein Programm:**
           
-          ⚡ **Wichtig:** Setze den Startwert **ganz am Anfang** (im Start-Block)!
+          1. Nutze die Variable `runden` von vorher (oder erstelle sie neu)
+          2. Setze `runden` auf **0**
+          3. **Endlosschleife:** Der RVR+ fährt eine Strecke
+          4. **Nach jeder Runde:** Erhöhe `runden` um +1
+          5. **Bedingung einbauen:** `Wenn runden >= 5` → **STOPP** + LEDs grün
           
-          _Sonst hat die Variable einen unbekannten Wert._
+          ---
+          
+          **Was du beobachten sollst:**
+          
+          - Der RVR+ fährt Runde 1, 2, 3, 4, 5
+          - Nach Runde 5: Er **stoppt automatisch**
+          - LEDs leuchten grün = **Fertig!**
+          
+          > 💡 **Wie stoppe ich in einer Endlosschleife?**
+          >
+          > **Option 1: Abbruch-Block**
+          > ```
+          > Wenn runden >= 5
+          >   → Breche Schleife ab
+          > ```
+          >
+          > **Option 2: Stopp-Block**
+          > ```
+          > Wenn runden >= 5
+          >   → Stoppe alle Motoren
+          >   → Stoppe Programm
+          > ```
+        noteLabel: "**Funktioniert der Auto-Stopp?** Hat er nach 5 Runden gestoppt?"
       
-      - key: variable_veraendern
-        label: Variable im Programm ändern
+      - key: geschwindigkeit_steigern
+        label: "Aufgabe 3: Immer schneller werden"
         description: |
-          **Variablen können sich während des Programms ändern:**
+          **Der RVR+ soll bei jeder Runde schneller fahren – nutze eine Variable `speed`!**
           
-          **Beispiele:**
+          **Dein Programm:**
           
-          ```
-          Ändere runden um +1
-          → Erhöht Zähler um 1
+          1. Erstelle Variable `speed`
+          2. Setze `speed` beim Start auf **30**
+          3. **Wiederhole 8 mal:**
+             - Fahre geradeaus mit Geschwindigkeit **`speed`** (nutze die Variable!)
+             - Warte 0.5 Sekunden
+             - Drehe um 45° (Achteck)
+             - **Erhöhe `speed` um +10**
           
-          Setze speed auf 80
-          → Überschreibt Wert komplett
+          ---
           
-          Ändere punkte um -5
-          → Verringert um 5
-          ```
+          **Was du beobachten sollst:**
           
-          💡 **Tipp:** Nutze "ändere um" für Zähler, "setze auf" für neue Werte!
+          - **Runde 1:** Langsam (Speed = 30)
+          - **Runde 2:** Etwas schneller (Speed = 40)
+          - **Runde 3:** Noch schneller (Speed = 50)
+          - **...bis Runde 8:** Sehr schnell (Speed = 110)!
+          
+          🚀 **Der RVR+ beschleunigt mit jeder Runde!**
+          
+          > 💡 **Tipp: Variable im Roll-Block nutzen**
+          >
+          > Im **Roll-Block** gibt es ein Feld für die Geschwindigkeit.  
+          > Dort kannst du statt einer festen Zahl (z.B. 50) die **Variable `speed`** einsetzen!  
+          > Der RVR+ nutzt dann immer den **aktuellen Wert**.
+        noteLabel: "**Beobachtung:** Wurde der RVR+ wirklich schneller? Was ist passiert?"
       
-      - key: variable_nutzen
-        label: Variable aktiv verwenden
+      - key: variablen_projekt
+        label: "🚀 Großprojekt: Adaptiver Explorations-Roboter"
         description: |
-          **Mache die Variable nützlich:**
+          **Aufgabe: Baue einen intelligenten Roboter, der sich an seine Umgebung anpasst!**
           
-          **Nutzungs-Möglichkeiten:**
+          Dieses Projekt kombiniert **ALLE bisherigen Level** zu einem komplexen System:
+          - 🚗 Bewegung (Level 1)
+          - 🔁 Schleifen (Level 2)
+          - 💡 LEDs (Level 3)
+          - 🎛️ Sensoren (Level 4)
+          - 🤔 Bedingungen (Level 5)
+          - 💾 Variablen (Level 6)
           
-          1. **In Bedingungen:**
-             - `Wenn runden > 3 → Stoppe`
-             - `Wenn modus = 2 → Turbo-Geschwindigkeit`
+          ---
           
-          2. **Für Bewegung:**
-             - Nutze Variable `speed` im Roll-Block
-             - Variable steuert Geschwindigkeit dynamisch
+          **🎯 Die Mission: "Terrain-Explorer"**
           
-          3. **Visuell anzeigen:**
-             - LED-Farbe abhängig von Variable
-             - Ausgabe in der App/Console
+          Programmiere einen RVR+, der **autonom** ein unbekanntes Gebiet erkundet, dabei **Daten sammelt** und sich **intelligent verhält**!
           
-          ✨ **Jetzt wird dein Roboter richtig smart!**
-      
-      - key: mini_projekt_variable
-        label: Projekt mit Variable umsetzen
-        description: |
-          **Baue ein komplettes Programm mit Variablen:**
+          ---
           
-          *Projekt-Ideen:*
+          **📋 Pflicht-Anforderungen:**
           
-          📊 **Runden-Zähler:**
-          - Variable `runden` zählt Durchläufe
-          - Nach 5 Runden → Stopp + LEDs grün
+          ---
+                    
+          **1. Mehrere Variablen (mindestens 2):**
+          - `erkundet_felder` – Zählt erkundete Bereiche
+          - `gefahr_level` – Speichert Gefahrenstufe (0 = sicher, 1 = vorsichtig, 2 = gefährlich)
+          - Optional: `punkte` `energie` `geschwindigkeit` etc.
           
-          🎮 **Modus-Wechsel:**
-          - Variable `modus`: 0 = langsam, 1 = mittel, 2 = schnell
-          - Farbe auf Boden ändert Modus
+          ---
+                    
+          **2. Autonome Bewegung mit Schleifen:**
+          - Der RVR+ fährt **automatisch** eine Explorations-Route
+          - Nutze **Endlosschleife** oder wiederhole X-mal
+          - Verschiedene Bewegungsmuster je nach Situation
           
-          ⚡ **Geschwindigkeits-Steuerung:**
-          - Variable `speed` erhöht sich jede Runde
-          - RVR+ wird immer schneller!
+          ---
+                    
+          **3. Multi-Sensor Nutzung (mindestens 2 Sensoren):**
+          - **Farbsensor:** Erkennt verschiedene "Zonen" (Rot, Grün, Blau)
+          - **Lichtsensor:** Reagiert auf Helligkeit (Tag/Nacht-Modus)
+          - **Neigungssensor:** Erkennt gefährliches Terrain
+            
+          ---
+                  
+          **4. Komplexe Bedingungen:**
+          - **Mehrere If-Else-Ketten**
+          - Verschiedene Reaktionen je nach Sensor-Kombination
+          - Beispiel: "Wenn dunkel UND rote Zone → Notfall-Protokoll"
+            
+          ---
+                  
+          **5. Dynamisches Verhalten:**
+          - Geschwindigkeit passt sich an `speed`
+          - LED-Farbe zeigt aktuellen Status an
+          - Verhalten ändert sich basierend auf gesammelten Daten
+            
+          ---
+                  
+          **6. Ziel & Abschluss:**
+          - Mission ist erfüllt nach: X Feldern erkundet ODER Gefahr-Grenze erreicht
+          - Abschluss-Sequenz (Victory Dance oder Alarm)
           
-          🎯 **Score-System:**
-          - Grün erkannt → +10 Punkte
-          - Rot erkannt → -5 Punkte
+          ---
           
-          **Zeige kreativ, was Variablen können!**
-        noteLabel: "**Dein Variablen-Projekt:** Name der Variable + Was sie macht"
+          > 🎮 **Beispiel-Projekt: "Mars-Rover Simulation"**
+          >
+          > **Das Szenario:**
+          > Der RVR+ ist ein Mars-Rover, der verschiedene Gebiete untersucht. Jede Farbe = eine Zone mit eigenen Eigenschaften.
+          >
+          > **🔢 Variablen:**
+          > - `proben_gesammelt` = 0 (Ziel: 10 Proben)
+          > - `energie` = 100 (sinkt bei Bewegung, Warnung bei < 30)
+          > - `terrain_schwierigkeit` = 0 (erhöht sich bei Neigung)
+          > - `speed` = 50 (passt sich an Terrain an)
+          >
+          > **🎨 Zonen-System (Farbsensor):**
+          >
+          > 🟢 **Grün = Sichere Zone**
+          > - Sammle Probe (`proben_gesammelt +1`)
+          > - Geschwindigkeit: Normal (50), LEDs: Grün
+          >
+          > 🔵 **Blau = Eis-Zone (rutschig!)**
+          > - Geschwindigkeit: Langsam (30), Energie -5
+          > - LEDs: Blau pulsierend
+          >
+          > 🔴 **Rot = Lava-Zone (gefährlich!)**
+          > - Sofort umdrehen! (`terrain_schwierigkeit +2`)
+          > - Energie -20, LEDs: Rot blinkend + Rückwärts
+          >
+          > 🟡 **Gelb = Sand-Zone**
+          > - Geschwindigkeit: 35 (Energie sparen), LEDs: Gelb
+          >
+          > **💡 Lichtsensor (Tag/Nacht):**
+          > - Bei Dunkelheit: Alle Geschwindigkeiten halbieren
+          > - LEDs dimmen, Energie-Verbrauch steigt!
+          >
+          > **⚖️ Neigungssensor:**
+          > - Starke Neigung → `terrain_schwierigkeit +1`
+          > - Geschwindigkeit reduzieren, Warnung bei > 5
+          >
+          > **🏁 Missions-Ende:**
+          >
+          > ✅ **Erfolg:** `proben_gesammelt >= 10` → Victory Dance, LEDs: Grün-Regenbogen
+          >
+          > ❌ **Energie leer:** `energie <= 0` → LEDs: Rot blinken, Stopp
+          >
+          > ❌ **Zu gefährlich:** `terrain_schwierigkeit >= 10` → Rückzug, LEDs: Orange-Alarm
+          
+          ---
+          
+          **🎨 Alternative Projekt-Ideen:**
+          
+          - **🏎️ Renn-Manager:** Variablen für Rundenzeit, Position, Speed-Boost-Zähler
+          - **🎯 Jagd-Spiel:** RVR+ "jagt" grüne Punkte, vermeidet rote, zählt Score + Zeit
+          - **🌡️ Umwelt-Monitor:** Mehrere Sensoren, Daten sammeln, bei Grenzwerten reagieren
+          - **🎪 Roboter-Show:** Choreografie mit Modi-Wechseln, Tempo-Änderungen, Effekt-Zählern
+          
+          ---
+          
+        noteLabel: |
+          **Reflexion: Dein Variablen-Projekt**
+          
+          - Was war deine Projekt-Idee?
+          - Was hat gut funktioniert?
+          - Was war schwierig oder überraschend?
+          - Wie haben die Variablen zusammengespielt?
+          - Was würdest du beim nächsten Mal anders machen?
 
   - key: ir
     num: 7

@@ -3,6 +3,7 @@ import { ChecklistView } from '@/components/checklist-view'
 import { getRobots } from '@/lib/robots'
 import { loadChecklist } from '@/lib/checklist-loader'
 import { getStudents } from '@/lib/students'
+import { getLevelLocks, filterUnlockedLevels } from '@/lib/level-locks'
 import { cookies } from 'next/headers'
 
 export default async function Page() {
@@ -12,7 +13,16 @@ export default async function Page() {
 
   const robots = await getRobots()
   const students = await getStudents()
-  const checklist = selectedStudent ? await loadChecklist(selectedRobot) : null
+  let checklist = selectedStudent ? await loadChecklist(selectedRobot) : null
+  
+  // Filter levels based on locks
+  if (checklist) {
+    const locks = await getLevelLocks(selectedRobot)
+    checklist = {
+      ...checklist,
+      levels: filterUnlockedLevels(checklist.levels, locks)
+    }
+  }
 
   return (
     <main className="min-h-screen">
