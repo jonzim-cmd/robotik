@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-export type Option = { value: string; label: string }
+export type Option = { value: string; label: string; course?: string }
 
 export function SearchableSelect({
   options,
@@ -18,15 +18,37 @@ export function SearchableSelect({
 }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [activeCourses, setActiveCourses] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement | null>(null)
   const boxRef = useRef<HTMLDivElement | null>(null)
 
   const selected = useMemo(() => options.find(o => o.value === value) || null, [options, value])
+  const courses = useMemo(() => {
+    const set = new Set<string>()
+    for (const o of options) if (o.course) set.add(o.course)
+    return Array.from(set).sort()
+  }, [options])
+
+  useEffect(() => {
+    // Initialize/trim active courses based on available ones
+    setActiveCourses(prev => {
+      if (prev.length === 0) return courses
+      const next = prev.filter(c => courses.includes(c))
+      // If all were removed (e.g., data changed), default to all
+      return next.length === 0 ? courses : next
+    })
+  }, [courses])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return options
-    return options.filter(o => o.label.toLowerCase().includes(q))
-  }, [options, query])
+    const byQuery = (o: Option) => (q ? o.label.toLowerCase().includes(q) : true)
+    const byCourse = (o: Option) => {
+      if (!courses.length) return true // no course data -> no filter
+      if (!o.course) return true      // items without course remain visible
+      return activeCourses.includes(o.course)
+    }
+    return options.filter(o => byQuery(o) && byCourse(o))
+  }, [options, query, activeCourses, courses])
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -66,6 +88,40 @@ export function SearchableSelect({
               onChange={(e) => setQuery(e.target.value)}
             />
           </div>
+          {courses.length > 0 && (
+            <div className="p-2 border-b border-neutral-800">
+              <div className="mb-1 text-xs text-neutral-400">Kurse</div>
+              <div className="flex flex-wrap gap-2">
+                {courses.map((c) => (
+                  <label key={c} className="inline-flex items-center gap-1 text-xs text-neutral-200">
+                    <input
+                      type="checkbox"
+                      className="accent-brand-500"
+                      checked={activeCourses.includes(c)}
+                      onChange={() =>
+                        setActiveCourses((prev) =>
+                          prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]
+                        )
+                      }
+                    />
+                    <span>{c}</span>
+                  </label>
+                ))}
+              </div>
+              <div className="mt-1 flex gap-3 text-[11px] text-neutral-400">
+                <button
+                  type="button"
+                  className="underline hover:text-neutral-200"
+                  onClick={() => setActiveCourses(courses)}
+                >Alle</button>
+                <button
+                  type="button"
+                  className="underline hover:text-neutral-200"
+                  onClick={() => setActiveCourses([])}
+                >Keine</button>
+              </div>
+            </div>
+          )}
           <ul className="max-h-64 overflow-auto">
             {filtered.length === 0 ? (
               <li className="px-3 py-2 text-sm text-neutral-500">Keine Treffer</li>
@@ -87,4 +143,3 @@ export function SearchableSelect({
     </div>
   )
 }
-

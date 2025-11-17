@@ -129,10 +129,12 @@ export async function POST(req: NextRequest) {
       if (rows.length === 0) {
         return NextResponse.json({ ok: true })
       }
-      const now = new Date()
-      const tuples = rows.map(u => vsql`(${robotKey}, ${u.levelKey}, ${u.unlocked}, ${now})`)
+      // @vercel/postgres sql template expects primitives; use ISO string for timestamp
+      const nowIso = new Date().toISOString()
+      const tuples = rows.map(u => vsql`(${robotKey}, ${u.levelKey}, ${u.unlocked}, ${nowIso})`)
+      const v: any = vsql
       await vsql`INSERT INTO level_locks (robot_key, level_key, unlocked, updated_at)
-        VALUES ${vsql.join(tuples, vsql`, `)}
+        VALUES ${v.join(tuples, vsql`, `)}
         ON CONFLICT (robot_key, level_key) DO UPDATE SET
           unlocked = EXCLUDED.unlocked,
           updated_at = EXCLUDED.updated_at`

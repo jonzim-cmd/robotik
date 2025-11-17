@@ -17,7 +17,10 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
     })
   }
 
-  const studentOptions = useMemo(() => students.map(s => ({ value: s.id, label: s.course ? `${s.displayName} (Kurs: ${s.course})` : s.displayName })), [students])
+  const studentOptions = useMemo(
+    () => students.map(s => ({ value: s.id, label: s.course ? `${s.displayName} (Kurs: ${s.course})` : s.displayName, course: s.course })),
+    [students]
+  )
 
   return (
     <header className="sticky top-0 z-20 border-b border-neutral-800 bg-neutral-950/80 backdrop-blur">
