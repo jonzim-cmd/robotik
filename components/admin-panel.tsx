@@ -33,6 +33,7 @@ export function AdminPanel() {
   const [editName, setEditName] = useState('')
   const [editCourse, setEditCourse] = useState('')
   const [studentBusyId, setStudentBusyId] = useState<string | null>(null)
+  const [openMenuFor, setOpenMenuFor] = useState<string | null>(null)
   const [studentQuery, setStudentQuery] = useState('')
   const [bulkBusy, setBulkBusy] = useState(false)
   const [activeCourses, setActiveCourses] = useState<string[]>([])
@@ -338,6 +339,46 @@ export function AdminPanel() {
       pushToast(`❌ ${msg}`,'error')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  async function resetStudentProgress(studentId: string, mode: 'all' | 'upto', uptoIndex?: number) {
+    setStudentBusyId(studentId)
+    try {
+      const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset_progress', robotKey: selectedRobot, upToLevelIndex: mode === 'all' ? null : (uptoIndex ?? null) })
+      })
+      const j = await res.json().catch(() => ({} as any))
+      if (!res.ok || !j.ok) throw new Error(j?.error || 'Fehler beim Zurücksetzen')
+      pushToast('✓ Level-Fortschritt zurückgesetzt', 'success')
+      // No auto-refresh of students needed; users see effect in checklist view
+    } catch (e: any) {
+      pushToast(`❌ ${e?.message || 'Fehler beim Zurücksetzen'}`, 'error')
+    } finally {
+      setStudentBusyId(null)
+      setOpenMenuFor(null)
+    }
+  }
+
+  async function resetStudentXP(studentId: string, scope: 'student' | 'robot' = 'student') {
+    setStudentBusyId(studentId)
+    try {
+      const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset_xp', scope, robotKey: scope === 'robot' ? selectedRobot : undefined })
+      })
+      const j = await res.json().catch(() => ({} as any))
+      if (!res.ok || !j.ok) throw new Error(j?.error || 'Fehler beim XP-Reset')
+      pushToast('✓ XP zurückgesetzt', 'success')
+      try { window.dispatchEvent(new Event('xp:updated')) } catch {}
+    } catch (e: any) {
+      pushToast(`❌ ${e?.message || 'Fehler beim XP-Reset'}`, 'error')
+    } finally {
+      setStudentBusyId(null)
+      setOpenMenuFor(null)
     }
   }
 
@@ -648,7 +689,7 @@ export function AdminPanel() {
                 )}
                 <span className="text-xs text-neutral-500 shrink-0">{s.id}</span>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="relative flex items-center gap-2 shrink-0">
                 {editId === s.id ? (
                   <>
                     <button className="btn text-sm" onClick={saveEdit} disabled={studentBusyId === s.id}>Speichern</button>
@@ -657,6 +698,33 @@ export function AdminPanel() {
                 ) : (
                   <>
                     <button className="btn text-sm" onClick={() => startEdit(s)} disabled={studentBusyId === s.id}>Bearbeiten</button>
+                    <div className="relative">
+                      <button className="btn text-sm" onClick={() => setOpenMenuFor(v => v === s.id ? null : s.id)} disabled={studentBusyId === s.id}>Aktionen</button>
+                      {openMenuFor === s.id && (
+                        <div className="absolute right-0 mt-1 w-64 rounded-md border border-neutral-800 bg-neutral-900/95 shadow-xl z-10">
+                          <div className="px-3 py-2 text-xs uppercase text-neutral-400">Zurücksetzen</div>
+                          <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentProgress(s.id, 'all')}>
+                            Levels zurücksetzen – Alle (Robot: {selectedRobot})
+                          </button>
+                          {levels.length > 0 && (
+                            <div className="max-h-52 overflow-auto border-t border-neutral-800">
+                              {levels.map((l, idx) => (
+                                <button key={l.key} className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentProgress(s.id, 'upto', idx)}>
+                                  Levels 0–{idx} zurücksetzen
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                          <div className="border-t border-neutral-800" />
+                          <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentXP(s.id, 'student')}>
+                            XP zurücksetzen – gesamt
+                          </button>
+                          <button className="w-full text-left px-3 py-2 text-sm hover:bg-neutral-800" onClick={() => resetStudentXP(s.id, 'robot')}>
+                            XP zurücksetzen – nur Robot ({selectedRobot})
+                          </button>
+                        </div>
+                      )}
+                    </div>
                     <button className="btn text-sm" onClick={() => deleteStudent(s.id)} disabled={studentBusyId === s.id}>Löschen</button>
                   </>
                 )}
