@@ -385,6 +385,7 @@ export function AdminPanel() {
       pushToast(`❌ ${e?.message || 'Fehler beim Zurücksetzen'}`, 'error')
     } finally {
       setStudentBusyId(null)
+      setOpenMenuFor(null)
     }
   }
 
@@ -404,48 +405,11 @@ export function AdminPanel() {
       pushToast(`❌ ${e?.message || 'Fehler beim XP-Reset'}`, 'error')
     } finally {
       setStudentBusyId(null)
-    }
-  }
-
-  async function resetStudentProgress(studentId: string, mode: 'all' | 'upto', uptoIndex?: number) {
-    setStudentBusyId(studentId)
-    try {
-      const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}/reset`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reset_progress', robotKey: selectedRobot, upToLevelIndex: mode === 'all' ? null : (uptoIndex ?? null) })
-      })
-      const j = await res.json().catch(() => ({} as any))
-      if (!res.ok || !j.ok) throw new Error(j?.error || 'Fehler beim Zurücksetzen')
-      pushToast('✓ Level-Fortschritt zurückgesetzt', 'success')
-      // No auto-refresh of students needed; users see effect in checklist view
-    } catch (e: any) {
-      pushToast(`❌ ${e?.message || 'Fehler beim Zurücksetzen'}`, 'error')
-    } finally {
-      setStudentBusyId(null)
       setOpenMenuFor(null)
     }
   }
 
-  async function resetStudentXP(studentId: string, scope: 'student' | 'robot' = 'student') {
-    setStudentBusyId(studentId)
-    try {
-      const res = await fetch(`/api/admin/students/${encodeURIComponent(studentId)}/reset`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reset_xp', scope, robotKey: scope === 'robot' ? selectedRobot : undefined })
-      })
-      const j = await res.json().catch(() => ({} as any))
-      if (!res.ok || !j.ok) throw new Error(j?.error || 'Fehler beim XP-Reset')
-      pushToast('✓ XP zurückgesetzt', 'success')
-      try { window.dispatchEvent(new Event('xp:updated')) } catch {}
-    } catch (e: any) {
-      pushToast(`❌ ${e?.message || 'Fehler beim XP-Reset'}`, 'error')
-    } finally {
-      setStudentBusyId(null)
-      setOpenMenuFor(null)
-    }
-  }
+  
 
   // Refs für Sektionen (Tabs)
   const levelRef = useRef<HTMLDivElement | null>(null)
