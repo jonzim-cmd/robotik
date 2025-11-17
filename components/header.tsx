@@ -2,6 +2,7 @@
 import { useMemo, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { SearchableSelect } from './searchable-select'
+import { LevelPill } from './xp/level-pill'
 
 type Robot = { key: string; name: string }
 type Student = { id: string; displayName: string; course?: string }
@@ -33,6 +34,9 @@ export function Header({ robots, students, selectedRobot, selectedStudent }: { r
             placeholder="Schüler wählen…"
             onChange={(v) => updateSelection('student', v)}
           />
+          {selectedStudent ? (
+            <LevelPill studentId={selectedStudent} robotKey={selectedRobot} />
+          ) : null}
           <select className="select" value={selectedRobot} onChange={(e) => updateSelection('robot', e.target.value)}>
             {robots.map((r) => (
               <option key={r.key} value={r.key}>{r.name}</option>

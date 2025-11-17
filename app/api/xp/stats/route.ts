@@ -1,0 +1,19 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { runMigrations } from '@/lib/migrate'
+import { getStats } from '@/lib/xp/services/stats'
+
+export const dynamic = 'force-dynamic'
+
+export async function GET(req: NextRequest) {
+  try {
+    await runMigrations()
+    const studentId = req.nextUrl.searchParams.get('student') || ''
+    if (!studentId) return NextResponse.json({ error: 'student required' }, { status: 400 })
+    const stats = await getStats(studentId)
+    return NextResponse.json({ ok: true, stats })
+  } catch (e) {
+    console.error('GET /api/xp/stats error:', e)
+    return NextResponse.json({ ok: false, error: 'Internal server error' }, { status: 500 })
+  }
+}
+
