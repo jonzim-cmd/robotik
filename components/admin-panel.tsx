@@ -341,6 +341,34 @@ export function AdminPanel() {
     }
   }
 
+  // Refs für Sektionen (Tabs)
+  const levelRef = useRef<HTMLDivElement | null>(null)
+  const studentsRef = useRef<HTMLDivElement | null>(null)
+  const setupRef = useRef<HTMLDivElement | null>(null)
+  const [activeTab, setActiveTab] = useState<'levels' | 'students' | 'setup'>('levels')
+
+  function scrollToRef(ref: React.RefObject<HTMLDivElement>) {
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  useEffect(() => {
+    const sections: Array<{ key: 'levels'|'students'|'setup'; el: HTMLElement | null }> = [
+      { key: 'levels', el: levelRef.current },
+      { key: 'students', el: studentsRef.current },
+      { key: 'setup', el: setupRef.current },
+    ]
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const match = sections.find(s => s.el === entry.target)
+          if (match) setActiveTab(match.key)
+        }
+      })
+    }, { root: null, threshold: 0.4, rootMargin: '-10% 0px -60% 0px' })
+    sections.forEach(s => { if (s.el) io.observe(s.el) })
+    return () => io.disconnect()
+  }, [])
+
   // PIN-Eingabe-Formular
   if (!isAuthenticated) {
     return (
@@ -409,8 +437,26 @@ export function AdminPanel() {
         </button>
       </div>
 
+      {/* Tabs */}
+      <div className="sticky top-14 z-10 bg-neutral-950/80 backdrop-blur border-b border-neutral-800">
+        <div className="flex gap-2 p-2">
+          <button
+            className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'levels' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
+            onClick={() => scrollToRef(levelRef)}
+          >Level-Verwaltung</button>
+          <button
+            className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'students' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
+            onClick={() => scrollToRef(studentsRef)}
+          >Schüler-Verwaltung</button>
+          <button
+            className={`px-4 py-1.5 text-sm rounded-full border transition ${activeTab === 'setup' ? 'border-brand-500 bg-brand-600/20 text-brand-100' : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800'}`}
+            onClick={() => scrollToRef(setupRef)}
+          >Setup</button>
+        </div>
+      </div>
+
       {/* Level-Verwaltung */}
-      <div className="card p-4">
+      <div ref={levelRef} className="card p-4">
         <div className="mb-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -499,7 +545,7 @@ export function AdminPanel() {
       </div>
 
       {/* Schüler anlegen */}
-      <div className="card p-4">
+      <div ref={studentsRef} className="card p-4">
         <div className="mb-2 font-medium">Schüler anlegen</div>
         <div className="flex gap-2">
           <input 
@@ -525,7 +571,7 @@ export function AdminPanel() {
 
       {/* Schülerliste */}
       <div className="card p-4">
-        <div className="mb-2 font-medium">Schüler</div>
+        <div className="mb-2 font-medium">Schüler-Verwaltung</div>
         <div className="mb-3">
           <input
             className="input w-full"
@@ -645,7 +691,7 @@ export function AdminPanel() {
       </div>
 
       {/* Setup (ans Ende verschoben) */}
-      <div className="card p-4">
+      <div ref={setupRef} className="card p-4">
         <div className="mb-2 font-medium">Setup</div>
         <button className="btn" onClick={initDb}>Datenbank initialisieren</button>
         {/* Statusmeldungen via Toasts */}
