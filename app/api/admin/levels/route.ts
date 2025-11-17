@@ -23,10 +23,19 @@ export async function GET(req: NextRequest) {
         POSTGRES_URL_NON_POOLING: !!process.env.POSTGRES_URL_NON_POOLING,
         DATABASE_URL_UNPOOLED: !!(process as any).env?.DATABASE_URL_UNPOOLED,
         POSTGRES_PRISMA_URL: !!process.env.POSTGRES_PRISMA_URL,
+        NEON_POSTGRES_URL: !!process.env.NEON_POSTGRES_URL,
+        NEON_DATABASE_URL: !!process.env.NEON_DATABASE_URL,
+        NEON_POSTGRES_URL_NON_POOLING: !!process.env.NEON_POSTGRES_URL_NON_POOLING,
+        NEON_DATABASE_URL_UNPOOLED: !!(process as any).env?.NEON_DATABASE_URL_UNPOOLED,
+        NEON_POSTGRES_PRISMA_URL: !!process.env.NEON_POSTGRES_PRISMA_URL,
         PGHOST: !!process.env.PGHOST,
         PGUSER: !!process.env.PGUSER,
         PGPASSWORD: !!process.env.PGPASSWORD,
         PGDATABASE: !!process.env.PGDATABASE,
+        NEON_PGHOST: !!process.env.NEON_PGHOST,
+        NEON_PGUSER: !!process.env.NEON_PGUSER,
+        NEON_PGPASSWORD: !!process.env.NEON_PGPASSWORD,
+        NEON_PGDATABASE: !!process.env.NEON_PGDATABASE,
       }
       console.info('GET /api/admin/levels env:', visible, 'resolved:', !!url)
     }
@@ -55,10 +64,19 @@ export async function GET(req: NextRequest) {
       POSTGRES_URL_NON_POOLING: !!process.env.POSTGRES_URL_NON_POOLING,
       DATABASE_URL_UNPOOLED: !!(process as any).env?.DATABASE_URL_UNPOOLED,
       POSTGRES_PRISMA_URL: !!process.env.POSTGRES_PRISMA_URL,
+      NEON_POSTGRES_URL: !!process.env.NEON_POSTGRES_URL,
+      NEON_DATABASE_URL: !!process.env.NEON_DATABASE_URL,
+      NEON_POSTGRES_URL_NON_POOLING: !!process.env.NEON_POSTGRES_URL_NON_POOLING,
+      NEON_DATABASE_URL_UNPOOLED: !!(process as any).env?.NEON_DATABASE_URL_UNPOOLED,
+      NEON_POSTGRES_PRISMA_URL: !!process.env.NEON_POSTGRES_PRISMA_URL,
       PGHOST: !!process.env.PGHOST,
       PGUSER: !!process.env.PGUSER,
       PGPASSWORD: !!process.env.PGPASSWORD,
       PGDATABASE: !!process.env.PGDATABASE,
+      NEON_PGHOST: !!process.env.NEON_PGHOST,
+      NEON_PGUSER: !!process.env.NEON_PGUSER,
+      NEON_PGPASSWORD: !!process.env.NEON_PGPASSWORD,
+      NEON_PGDATABASE: !!process.env.NEON_PGDATABASE,
     }
     console.error('GET /api/admin/levels error:', error, 'env:', visible, 'resolved:', !!url)
     const msg = typeof error?.message === 'string' && /No database configured/i.test(error.message)
@@ -81,10 +99,19 @@ export async function POST(req: NextRequest) {
         POSTGRES_URL_NON_POOLING: !!process.env.POSTGRES_URL_NON_POOLING,
         DATABASE_URL_UNPOOLED: !!(process as any).env?.DATABASE_URL_UNPOOLED,
         POSTGRES_PRISMA_URL: !!process.env.POSTGRES_PRISMA_URL,
+        NEON_POSTGRES_URL: !!process.env.NEON_POSTGRES_URL,
+        NEON_DATABASE_URL: !!process.env.NEON_DATABASE_URL,
+        NEON_POSTGRES_URL_NON_POOLING: !!process.env.NEON_POSTGRES_URL_NON_POOLING,
+        NEON_DATABASE_URL_UNPOOLED: !!(process as any).env?.NEON_DATABASE_URL_UNPOOLED,
+        NEON_POSTGRES_PRISMA_URL: !!process.env.NEON_POSTGRES_PRISMA_URL,
         PGHOST: !!process.env.PGHOST,
         PGUSER: !!process.env.PGUSER,
         PGPASSWORD: !!process.env.PGPASSWORD,
         PGDATABASE: !!process.env.PGDATABASE,
+        NEON_PGHOST: !!process.env.NEON_PGHOST,
+        NEON_PGUSER: !!process.env.NEON_PGUSER,
+        NEON_PGPASSWORD: !!process.env.NEON_PGPASSWORD,
+        NEON_PGDATABASE: !!process.env.NEON_PGDATABASE,
       }
       console.info('POST /api/admin/levels env:', visible, 'resolved:', !!url)
     }
@@ -121,10 +148,19 @@ export async function POST(req: NextRequest) {
       POSTGRES_URL_NON_POOLING: !!process.env.POSTGRES_URL_NON_POOLING,
       DATABASE_URL_UNPOOLED: !!(process as any).env?.DATABASE_URL_UNPOOLED,
       POSTGRES_PRISMA_URL: !!process.env.POSTGRES_PRISMA_URL,
+      NEON_POSTGRES_URL: !!process.env.NEON_POSTGRES_URL,
+      NEON_DATABASE_URL: !!process.env.NEON_DATABASE_URL,
+      NEON_POSTGRES_URL_NON_POOLING: !!process.env.NEON_POSTGRES_URL_NON_POOLING,
+      NEON_DATABASE_URL_UNPOOLED: !!(process as any).env?.NEON_DATABASE_URL_UNPOOLED,
+      NEON_POSTGRES_PRISMA_URL: !!process.env.NEON_POSTGRES_PRISMA_URL,
       PGHOST: !!process.env.PGHOST,
       PGUSER: !!process.env.PGUSER,
       PGPASSWORD: !!process.env.PGPASSWORD,
       PGDATABASE: !!process.env.PGDATABASE,
+      NEON_PGHOST: !!process.env.NEON_PGHOST,
+      NEON_PGUSER: !!process.env.NEON_PGUSER,
+      NEON_PGPASSWORD: !!process.env.NEON_PGPASSWORD,
+      NEON_PGDATABASE: !!process.env.NEON_PGDATABASE,
     }
     console.error('POST /api/admin/levels error:', error, 'env:', visible, 'resolved:', !!url)
     const msg = typeof error?.message === 'string' && /No database configured/i.test(error.message)
