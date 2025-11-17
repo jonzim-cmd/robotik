@@ -42,7 +42,7 @@ export function useProgressQueue(robotKey: string, studentId: string) {
     pendingRef.current = { ...pendingRef.current, ...delta }
     // Debounce flush
     if (timerRef.current) clearTimeout(timerRef.current)
-    timerRef.current = setTimeout(flush, 250)
+    timerRef.current = setTimeout(flush, 150)
   }, [flush])
 
   useEffect(() => {

@@ -4,6 +4,8 @@ import { Markdown, MarkdownInline } from '@/lib/markdown'
 import { stripMarkdown } from '@/lib/text'
 import type { Checklist } from '@/lib/checklist-loader'
 import { useProgressQueue } from './hooks/use-progress-queue'
+import { getRules } from '@/lib/xp/services/rules'
+import { getCoolLevelTitle } from '@/lib/level-names'
 
 type Props = { robotKey: string; studentId: string; checklist: Checklist }
 
@@ -15,6 +17,16 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
   const [progress, setProgress] = useState<ProgressMap>({})
   const [textValues, setTextValues] = useState<Record<string, string>>({})
   const { isSaving, queue } = useProgressQueue(robotKey, studentId)
+  const rules = useMemo(() => getRules(robotKey), [robotKey])
+
+  // Map itemKey -> level info for quick lookups
+  const itemToLevel = useMemo(() => {
+    const map = new Map<string, { levelIdx: number; levelKey: string; total: number }>()
+    checklist.levels.forEach((lvl, idx) => {
+      lvl.items.forEach(it => map.set(it.key, { levelIdx: idx, levelKey: lvl.key, total: lvl.items.length }))
+    })
+    return map
+  }, [checklist.levels])
 
   // load initial progress (DB only)
   useEffect(() => {
@@ -52,6 +64,32 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
     const next: ProgressMap = { ...progress, [itemKey]: entry }
     setProgress(next as ProgressMap)
     if (!studentId) return
+
+    // Optimistic XP: only for positive transitions
+    let optimisticDelta = 0
+    if ((prev?.status !== 'done') && currentStatus === 'done') {
+      // Base XP
+      optimisticDelta += rules.baseItemXP
+      // Level completion bonus
+      const lvlInfo = itemToLevel.get(itemKey)
+      if (lvlInfo) {
+        const lvl = checklist.levels[lvlInfo.levelIdx]
+        const doneAfter = lvl.items.filter(it => (next[it.key]?.status === 'done')).length
+        if (doneAfter === lvlInfo.total) optimisticDelta += rules.levelCompleteXP
+      }
+      // Mastery tier bonuses if thresholds crossed
+      const prevDone = Object.values(progress).filter(p => p.status === 'done').length
+      const nextDone = Object.values(next).filter(p => p.status === 'done').length
+      for (let i = 0; i < rules.mastery.tiers.length; i++) {
+        const t = rules.mastery.tiers[i]
+        if (prevDone < t.thresholdItems && nextDone >= t.thresholdItems) {
+          optimisticDelta += t.bonusXP
+        }
+      }
+    }
+    if (optimisticDelta > 0) {
+      try { window.dispatchEvent(new CustomEvent('xp:optimistic', { detail: { studentId, robotKey, delta: optimisticDelta } })) } catch {}
+    }
     queue({ [itemKey]: entry })
   }
 
@@ -61,6 +99,27 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
     setProgress(next)
     setTextValues({ ...textValues, [itemKey]: text })
     if (!studentId) return
+    // Optimistic XP for text items when transitioning to done
+    if ((progress[itemKey]?.status !== 'done') && status === 'done') {
+      let optimisticDelta = rules.baseItemXP
+      const lvlInfo = itemToLevel.get(itemKey)
+      if (lvlInfo) {
+        const lvl = checklist.levels[lvlInfo.levelIdx]
+        const doneAfter = lvl.items.filter(it => (next[it.key]?.status === 'done')).length
+        if (doneAfter === lvlInfo.total) optimisticDelta += rules.levelCompleteXP
+      }
+      const prevDone = Object.values(progress).filter(p => p.status === 'done').length
+      const nextDone = Object.values(next).filter(p => p.status === 'done').length
+      for (let i = 0; i < rules.mastery.tiers.length; i++) {
+        const t = rules.mastery.tiers[i]
+        if (prevDone < t.thresholdItems && nextDone >= t.thresholdItems) {
+          optimisticDelta += t.bonusXP
+        }
+      }
+      if (optimisticDelta > 0) {
+        try { window.dispatchEvent(new CustomEvent('xp:optimistic', { detail: { studentId, robotKey, delta: optimisticDelta } })) } catch {}
+      }
+    }
     queue({ [itemKey]: { status, payload: { text } } as any })
   }
 
@@ -85,8 +144,10 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
                 : 'border-neutral-800 bg-neutral-900/60 text-neutral-300 hover:bg-neutral-800 hover:border-neutral-700'
             }`}
             onClick={() => setTab(idx)}
+            title={getCoolLevelTitle(robotKey, lvl.key, lvl.title)}
           >
             <span className="font-semibold">Level {lvl.num ?? (idx + 1)}</span>
+            <span className="ml-2 hidden sm:inline text-neutral-400">{getCoolLevelTitle(robotKey, lvl.key, lvl.title)}</span>
             <span className="ml-2.5 rounded-full bg-neutral-900/80 px-2.5 py-1 text-xs font-medium text-neutral-300">
               {levelStats[idx]?.done}/{levelStats[idx]?.total}
             </span>
@@ -115,7 +176,7 @@ export function ChecklistView({ robotKey, studentId, checklist }: Props) {
             {checklist.title}
           </div>
           <h2 className="text-2xl font-bold text-neutral-50 mb-3">
-            {checklist.levels[tab]?.title}
+            {getCoolLevelTitle(robotKey, checklist.levels[tab]!.key, checklist.levels[tab]!.title)}
           </h2>
           {checklist.levels[tab]?.intro ? (
             <div className="text-neutral-200 bg-neutral-900/50 rounded-lg p-4 border border-neutral-800">

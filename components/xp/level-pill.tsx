@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { getRules, levelFromTotalXP } from '@/lib/xp/services/rules'
 
 type Props = { studentId: string; robotKey: string; className?: string }
 
@@ -17,7 +18,9 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
   const [robotTier, setRobotTier] = useState<number>(0)
   const [nextLevelXP, setNextLevelXP] = useState<number>(0)
   const [prevTotalXp, setPrevTotalXp] = useState<number>(0)
+  const [totalXp, setTotalXp] = useState<number>(0)
   const [floaters, setFloaters] = useState<Array<{ id: number; drift: number }>>([])
+  const rules = getRules(robotKey)
 
   useEffect(() => {
     let cancelled = false
@@ -28,10 +31,11 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
         const j: StatsResp = await res.json()
         if (!cancelled && j.ok && j.stats) {
           // Detect XP gains to trigger floater animation
-          setLevel(j.stats.student.level)
-          const newXpInLevel = j.stats.student.xpInLevel
           const newTotal = j.stats.student.totalXP
+          const { level: newLevel, xpInLevel: newXpInLevel, nextLevelXP: nextXP } = levelFromTotalXP(newTotal, rules.levelCurve)
+          setLevel(newLevel)
           setXpInLevel(newXpInLevel)
+          setTotalXp(newTotal)
           if (newTotal > prevTotalXp) {
             const delta = newTotal - prevTotalXp
             const count = Math.max(1, Math.min(3, Math.round(delta / 10)))
@@ -44,7 +48,7 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
             }, 950)
           }
           setPrevTotalXp(newTotal)
-          setNextLevelXP(j.stats.student.nextLevelXP || 0)
+          setNextLevelXP(nextXP || 0)
           const r = j.stats.robots[robotKey]
           setRobotTier(r?.masteryTier || 0)
         }
@@ -52,10 +56,30 @@ export function LevelPill({ studentId, robotKey, className = '' }: Props) {
     }
     load()
     const onUpdated = () => load()
+    const onOptimistic = (e: any) => {
+      if (!e?.detail) return
+      const { studentId: sid, robotKey: rk, delta } = e.detail
+      if (sid !== studentId || rk !== robotKey || !delta) return
+      const newTotal = totalXp + delta
+      const { level: newLevel, xpInLevel: newXpInLevel, nextLevelXP: nextXP } = levelFromTotalXP(newTotal, rules.levelCurve)
+      setLevel(newLevel)
+      setXpInLevel(newXpInLevel)
+      setNextLevelXP(nextXP)
+      setTotalXp(newTotal)
+      const count = Math.max(1, Math.min(3, Math.round(delta / 10)))
+      const now = Date.now()
+      const items = Array.from({ length: count }, (_, i) => ({ id: now + i, drift: (Math.random() - 0.5) * 14 }))
+      setFloaters((cur) => [...cur, ...items])
+      setTimeout(() => {
+        setFloaters((cur) => cur.filter(f => !items.find(it => it.id === f.id)))
+      }, 950)
+    }
     window.addEventListener('xp:updated', onUpdated as any)
+    window.addEventListener('xp:optimistic', onOptimistic as any)
     return () => {
       cancelled = true
       window.removeEventListener('xp:updated', onUpdated as any)
+      window.removeEventListener('xp:optimistic', onOptimistic as any)
     }
   }, [studentId, robotKey])
 
