@@ -467,8 +467,29 @@ export function AdminPanel() {
   const setupRef = useRef<HTMLDivElement | null>(null)
   const [activeTab, setActiveTab] = useState<'levels' | 'students' | 'setup'>('levels')
 
+  // Höhe der fixierten Header ermitteln (globaler Header + AdminHeader)
+  const [headerOffset, setHeaderOffset] = useState(0)
+
+  useEffect(() => {
+    function measureHeader() {
+      try {
+        const headers = Array.from(document.querySelectorAll('header.sticky')) as HTMLElement[]
+        const total = headers.reduce((sum, el) => sum + (el?.offsetHeight || 0), 0)
+        setHeaderOffset(total)
+      } catch {}
+    }
+    measureHeader()
+    window.addEventListener('resize', measureHeader)
+    return () => window.removeEventListener('resize', measureHeader)
+  }, [])
+
+  function scrollToElement(el: HTMLElement | null) {
+    if (!el) return
+    // Nutzt scroll-margin-top auf den Sektionen für korrekte Positionierung
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
   function scrollToRef(ref: React.RefObject<HTMLDivElement>) {
-    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    scrollToElement(ref.current)
   }
 
   useEffect(() => {
@@ -484,10 +505,10 @@ export function AdminPanel() {
           if (match) setActiveTab(match.key)
         }
       })
-    }, { root: null, threshold: 0.4, rootMargin: '-10% 0px -60% 0px' })
+    }, { root: null, threshold: 0.4, rootMargin: `-${Math.max(0, headerOffset)}px 0px -60% 0px` })
     sections.forEach(s => { if (s.el) io.observe(s.el) })
     return () => io.disconnect()
-  }, [])
+  }, [headerOffset])
 
   // PIN-Eingabe-Formular
   if (!isAuthenticated) {
@@ -556,7 +577,7 @@ export function AdminPanel() {
       {/* Tabs sind im AdminHeader untergebracht */}
 
       {/* Level-Verwaltung */}
-      <div ref={levelRef} className="card p-4">
+      <div ref={levelRef} className="card p-4" style={{ scrollMarginTop: headerOffset }}>
         <div className="mb-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -668,7 +689,7 @@ export function AdminPanel() {
       </div>
 
       {/* Schüler anlegen */}
-      <div ref={studentsRef} className="card p-4">
+      <div ref={studentsRef} className="card p-4" style={{ scrollMarginTop: headerOffset }}>
         <div className="mb-2 font-medium">Schüler anlegen</div>
         <div className="flex gap-2">
           <input 
@@ -882,7 +903,7 @@ export function AdminPanel() {
       </div>
 
       {/* Setup (ans Ende verschoben) */}
-      <div ref={setupRef} className="card p-4">
+      <div ref={setupRef} className="card p-4" style={{ scrollMarginTop: headerOffset }}>
         <div className="mb-2 font-medium">Setup</div>
         <button className="btn" onClick={initDb} disabled={initBusy}>
           {initBusy ? 'Initialisiere…' : 'Datenbank initialisieren'}
