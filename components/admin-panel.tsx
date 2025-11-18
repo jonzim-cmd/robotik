@@ -546,9 +546,9 @@ export function AdminPanel() {
     <div className="space-y-6">
       <AdminHeader
         activeTab={activeTab}
-        onLevels={() => scrollToRef(levelRef)}
-        onStudents={() => scrollToRef(studentsRef)}
-        onSetup={() => scrollToRef(setupRef)}
+        onLevels={() => { setActiveTab('levels'); scrollToRef(levelRef) }}
+        onStudents={() => { setActiveTab('students'); scrollToRef(studentsRef) }}
+        onSetup={() => { setActiveTab('setup'); scrollToRef(setupRef) }}
       />
       {/* Zurück-Button */}
       <div />
